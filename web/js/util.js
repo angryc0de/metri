@@ -3,6 +3,10 @@
   'use strict';
 
   var WEEK_CN = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  var WEEK_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON_EN = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function isEn() { return g.LANG === 'en'; }
 
   function fmtNum(v) {
     if (v == null) return '—';
@@ -11,19 +15,27 @@
     return n.toFixed(1);
   }
 
-  /** "10 月 23 日 周五" */
+  /** 中文 "10 月 23 日 周五" / 英文 "Fri, Oct 23" */
   function dayTitle(day) {
     var o = DB.fromEpochDay(day);
+    if (isEn()) return WEEK_EN[o.dow] + ', ' + MON_EN[o.m] + ' ' + o.d;
     return o.m + ' 月 ' + o.d + ' 日 ' + WEEK_CN[o.dow];
   }
 
   /** "今天 / 昨天 / 10 月 20 日" */
   function dayShort(day) {
     var t = DB.today();
-    if (day === t) return '今天';
-    if (day === t - 1) return '昨天';
+    if (day === t) return isEn() ? 'Today' : '今天';
+    if (day === t - 1) return isEn() ? 'Yesterday' : '昨天';
     var o = DB.fromEpochDay(day);
+    if (isEn()) return MON_EN[o.m] + ' ' + o.d;
     return o.m + ' 月 ' + o.d + ' 日';
+  }
+
+  /** "2026 年 10 月" / "October 2026" */
+  function monthLabel(y, m) {
+    if (isEn()) return MON_EN[m] + ' ' + y;
+    return y + ' 年 ' + m + ' 月';
   }
 
   function esc(s) {
@@ -64,6 +76,7 @@
     fmtNum: fmtNum,
     dayTitle: dayTitle,
     dayShort: dayShort,
+    monthLabel: monthLabel,
     esc: esc,
     chev: chev,
     dot: dot,

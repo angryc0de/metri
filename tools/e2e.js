@@ -75,6 +75,7 @@ function ok(name, cond, extra) {
   const tmp = process.env.TEMP + '\\edge-e2e-' + Date.now();
   const proc = spawn(EDGE, [
     '--headless=new', '--disable-gpu', '--hide-scrollbars',
+    '--lang=zh-CN',
     `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmp}`,
     '--window-size=430,932', APP
   ], { stdio: 'ignore' });
@@ -216,6 +217,31 @@ function ok(name, cond, extra) {
     const demoMealDays = new Set(demo.meals.map(m => m.day));
     ok('示例数据：饮食覆盖 7 天', demoMealDays.size === 7, '实际 ' + demoMealDays.size);
     ok('示例数据：休息日 2 天', demo.restDays.length === 2, '实际 ' + demo.restDays.length);
+
+    // ---------- 英文模式：?lang=en 强制切换，词典应覆盖核心界面
+    await cdp.eval("localStorage.clear()");
+    await cdp.eval("location.href = '" + APP + "?lang=en'");
+    await sleep(1500);
+    ok('EN：引导页标题已翻译',
+      (await cdp.eval("document.querySelector('.onboard h1').textContent")) === 'First, a quick intro');
+    ok('EN：开始按钮已翻译',
+      (await cdp.eval("document.querySelector('[data-act=\"ob-done\"]').textContent")) === 'Start logging');
+    await cdp.eval("document.getElementById('ob-name').value = 'tester';"
+      + "document.getElementById('ob-age').value = '30';"
+      + "document.getElementById('ob-height').value = '180';"
+      + "document.getElementById('ob-weight').value = '80';"
+      + "document.querySelector('[data-act=\"ob-done\"]').click()");
+    await sleep(800);
+    ok('EN：顶栏日期为英文', ((await cdp.eval("document.querySelector('.who-sub').textContent"))
+      .indexOf('Today') === 0), (await cdp.eval("document.querySelector('.who-sub').textContent")));
+    ok('EN：页签已翻译',
+      (await cdp.eval("document.querySelector('.tabbar').textContent")).indexOf('Train') >= 0
+      && (await cdp.eval("document.querySelector('.tabbar').textContent")).indexOf('Diet') >= 0);
+    ok('EN：缺口标签已翻译',
+      ((await cdp.eval("document.body.innerHTML")).indexOf('Deficit') >= 0
+        || (await cdp.eval("document.body.innerHTML")).indexOf('Over by') >= 0));
+    ok('EN：html lang 属性已切换',
+      (await cdp.eval("document.documentElement.lang")) === 'en');
 
   } catch (e) {
     fail++;

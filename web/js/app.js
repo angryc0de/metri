@@ -56,8 +56,8 @@
   function busyHtml() {
     return '<div class="busy-mask"><div class="busy-box">'
       + '<div class="busy-dot"></div>'
-      + '<div class="busy-t">正在拆解这一餐…</div>'
-      + '<div class="busy-s">本地规则计算，很快</div>'
+      + '<div class="busy-t">' + T('正在拆解这一餐…') + '</div>'
+      + '<div class="busy-s">' + T('本地规则计算，很快') + '</div>'
       + '</div></div>';
   }
 
@@ -96,8 +96,8 @@
     return '<header class="topbar">'
       + '<div class="wordmark">Metri</div>'
       + '<div class="topbar-row">'
-      + '<div class="who"><div class="who-name">' + U.esc(p.name || '你好') + '</div>'
-      + '<div class="who-sub">今天 · ' + U.dayTitle(DB.today()) + '</div></div>'
+      + '<div class="who"><div class="who-name">' + U.esc(p.name || T('你好')) + '</div>'
+      + '<div class="who-sub">' + T('今天 · ') + U.dayTitle(DB.today()) + '</div></div>'
       + '<div class="weight-pill" data-act="open-profile">' + U.fmtNum(p.weightKg) + '<span>kg</span></div>'
       + '</div></header>';
   }
@@ -105,7 +105,7 @@
   function monthbarHtml() {
     return '<div class="monthbar">'
       + '<button class="icon-btn" data-act="prev-month">' + U.chev('left') + '</button>'
-      + '<div class="month-label">' + S.month.y + ' 年 ' + S.month.m + ' 月</div>'
+      + '<div class="month-label">' + U.monthLabel(S.month.y, S.month.m) + '</div>'
       + '<button class="icon-btn" data-act="next-month">' + U.chev('right') + '</button>'
       + '<div class="spacer"></div>'
       + '<button class="icon-btn" data-act="toggle-collapse">' + U.chev(S.collapsed ? 'down' : 'up') + '</button>'
@@ -128,8 +128,12 @@
     var selRow = Math.floor((S.day - r.start) / 7);
     if (selRow < 0 || selRow >= r.rows) selRow = 0;
 
-    var h = '<div class="weekdays"><div>一</div><div>二</div><div>三</div><div>四</div>'
-      + '<div>五</div><div>六</div><div>日</div></div><div class="weeks">';
+    var WD = window.LANG === 'en'
+      ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      : ['一', '二', '三', '四', '五', '六', '日'];
+    var h = '<div class="weekdays">';
+    for (var i = 0; i < 7; i++) h += '<div>' + WD[i] + '</div>';
+    h += '</div><div class="weeks">';
 
     for (var w = 0; w < r.rows; w++) {
       if (S.collapsed && w !== selRow) continue;
@@ -159,7 +163,7 @@
 
     var mark = '';
     if (det.isRest) {
-      mark = '<span class="rest">休</span>';
+      mark = '<span class="rest">' + T('休') + '</span>';
     } else if (det.hasStrength || det.hasCardio) {
       if (det.hasStrength) mark += '<i class="dot strength"></i>';
       if (det.hasCardio) mark += '<i class="dot cardio"></i>';
@@ -181,11 +185,11 @@
 
   function legendHtml() {
     return '<div class="legend">'
-      + '<span class="legend-item"><i class="dot strength"></i>力量</span>'
-      + '<span class="legend-item"><i class="dot cardio"></i>有氧</span>'
-      + '<span class="legend-item"><span class="rest">休</span></span>'
+      + '<span class="legend-item"><i class="dot strength"></i>' + T('力量') + '</span>'
+      + '<span class="legend-item"><i class="dot cardio"></i>' + T('有氧') + '</span>'
+      + '<span class="legend-item"><span class="rest">' + T('休') + '</span></span>'
       + '<span class="spacer"></span>'
-      + '<span>数字颜色 = 热量缺口</span></div>';
+      + '<span>' + T('数字颜色 = 热量缺口') + '</span></div>';
   }
 
   // ---------------------------------------------------------------- 内容
@@ -204,11 +208,9 @@
 
     var big = det.deficit == null ? '—' : String(Math.abs(det.deficit));
     var color = det.deficit == null ? 'dim-text' : over ? 'red' : 'green';
-    var label = over ? '热量超出' : '热量缺口';
+    var label = over ? T('热量超出') : T('热量缺口');
 
-    var tdeeNote = tdee.adaptive
-      ? '基础消耗 ' + Math.round(tdee.value) + ' kcal · 自适应'
-      : '基础消耗 ' + Math.round(tdee.value) + ' kcal';
+    var tdeeNote = T('基础消耗 ') + Math.round(tdee.value) + ' kcal' + (tdee.adaptive ? T(' · 自适应') : '');
 
     return '<div class="card">'
       + '<div class="card-head">'
@@ -217,8 +219,8 @@
       + '<div style="text-align:right"><div class="card-sub">' + label + '</div>'
       + '<div class="big-num ' + color + '">' + big + '<span class="unit">kcal</span></div></div>'
       + '</div>'
-      + (ws ? '<div class="week-strip"><span>本周 平均缺口 <b>' + (ws.avg == null ? '—' : ws.avg) + '</b></span>'
-        + '<span>达标 <b>' + ws.hit + '/' + ws.days + '</b> 天（目标 ' + ws.target + '）</span></div>' : '')
+      + (ws ? '<div class="week-strip"><span>' + T('本周 平均缺口 ') + '<b>' + (ws.avg == null ? '—' : ws.avg) + '</b></span>'
+        + '<span>' + T('达标 ') + '<b>' + ws.hit + '/' + ws.days + '</b>' + T(' 天（目标 ') + ws.target + T('）') + '</span></div>' : '')
       + '</div>';
   }
 
@@ -226,38 +228,38 @@
     var det = DB.dayDetail(S.day);
     var h = dayCard(st, 'train');
 
-    h += '<div class="section-head"><div class="section-title">力量训练</div>'
-      + '<div class="section-count">' + (det.hasStrength ? '' : '还没有记录') + '</div><div class="spacer"></div>'
+    h += '<div class="section-head"><div class="section-title">' + T('力量训练') + '</div>'
+      + '<div class="section-count">' + (det.hasStrength ? '' : T('还没有记录')) + '</div><div class="spacer"></div>'
       + '<button class="add-btn" data-act="open-exercise">+</button></div>';
 
     var stg = st.strength.filter(function (x) { return x.day === S.day; });
     if (!stg.length) {
-      h += '<div class="empty">还没有力量记录，点上面的 + 添加</div>';
+      h += '<div class="empty">' + T('还没有力量记录，点上面的 + 添加') + '</div>';
     } else {
       stg.forEach(function (x) {
-        h += rowRecord('strength', x.id, x.exerciseName,
-          U.fmtNum(x.weightKg) + 'kg × ' + x.reps + ' 次 × ' + x.sets + ' 组'
-          + (x.bodyweight ? ' · 自重' : '') + ' · ' + U.fmtNum(x.minutes) + ' 分钟',
+        h += rowRecord('strength', x.id, T(x.exerciseName),
+          U.fmtNum(x.weightKg) + 'kg × ' + x.reps + ' ' + T('次') + ' × ' + x.sets + ' ' + T('组')
+          + (x.bodyweight ? T(' · 自重') : '') + ' · ' + U.fmtNum(x.minutes) + ' ' + T('分钟'),
           Math.round(x.netKcal), 'net', 'blue');
       });
     }
 
-    h += '<div class="section-head" style="margin-top:4px"><div class="section-title">有氧</div>'
-      + '<div class="section-count">' + (det.hasCardio ? '' : '还没有记录') + '</div><div class="spacer"></div>'
+    h += '<div class="section-head" style="margin-top:4px"><div class="section-title">' + T('有氧') + '</div>'
+      + '<div class="section-count">' + (det.hasCardio ? '' : T('还没有记录')) + '</div><div class="spacer"></div>'
       + '<button class="add-btn" data-act="open-cardio">+</button></div>';
 
     var car = st.cardio.filter(function (x) { return x.day === S.day; });
     if (!car.length) {
-      h += '<div class="empty">还没有有氧记录，点上面的 + 添加</div>';
+      h += '<div class="empty">' + T('还没有有氧记录，点上面的 + 添加') + '</div>';
     } else {
       car.forEach(function (x) {
-        h += rowRecord('cardio', x.id, x.typeName, cardioDesc(x),
+        h += rowRecord('cardio', x.id, T(x.typeName), cardioDesc(x),
           Math.round(x.netKcal), 'net', 'amber');
       });
     }
 
     h += '<button class="ghost-btn" style="margin-top:6px" data-act="toggle-rest">'
-      + (det.isRest ? '取消「休息日」标记' : '标记今天为休息日') + '</button>';
+      + (det.isRest ? T('取消「休息日」标记') : T('标记今天为休息日')) + '</button>';
 
     return h;
   }
@@ -270,11 +272,11 @@
         var v = x.params[p.key];
         if (v == null) return;
         if (p.key === 'min') return;
-        parts.push(p.label + ' ' + U.fmtNum(v) + p.unit);
+        parts.push(T(p.label) + ' ' + U.fmtNum(v) + T(p.unit));
       });
     }
-    if (x.enumValue) parts.push(x.enumValue);
-    parts.push(U.fmtNum(x.minutes) + ' 分钟');
+    if (x.enumValue) parts.push(T(x.enumValue));
+    parts.push(U.fmtNum(x.minutes) + ' ' + T('分钟'));
     return parts.join(' · ');
   }
 
@@ -283,7 +285,7 @@
       + '<div class="row-main"><div class="row-title">' + U.esc(title) + '</div>'
       + '<div class="row-sub">' + U.esc(sub) + '</div></div>'
       + '<div class="row-num"><span class="v ' + color + '">' + kcal + '</span>'
-      + '<span class="u">kcal</span><div class="lbl">净消耗</div></div>'
+      + '<span class="u">kcal</span><div class="lbl">' + T('净消耗') + '</div></div>'
       + '<button class="del-dot" data-act="del" data-kind="' + kind + '" data-id="' + id + '">×</button>'
       + '</div>';
   }
@@ -298,15 +300,15 @@
     var h = '<div class="card">'
       + '<div class="card-head">'
       + '<div><div class="card-title">' + U.dayTitle(S.day) + '</div>'
-      + '<div class="card-sub">已摄入 ' + Math.round(det.intakeKcal) + ' kcal</div></div>'
-      + '<div style="text-align:right"><div class="card-sub">' + (over ? '热量超出' : '热量缺口') + '</div>'
+      + '<div class="card-sub">' + T('已摄入 ') + Math.round(det.intakeKcal) + ' kcal</div></div>'
+      + '<div style="text-align:right"><div class="card-sub">' + (over ? T('热量超出') : T('热量缺口')) + '</div>'
       + '<div class="big-num ' + (det.deficit == null ? 'dim-text' : over ? 'red' : 'green') + '">'
       + (det.deficit == null ? '—' : Math.abs(det.deficit)) + '<span class="unit">kcal</span></div></div>'
       + '</div>'
       + '<div class="stat-grid">'
-      + statItem('蛋白质', U.fmtNum(det.intakeProtein), 'g', det.intakeProtein >= target ? 'blue' : '')
-      + statItem('目标蛋白', String(target), 'g', '')
-      + statItem('已记录', String(det.mealCount), '项', '')
+      + statItem(T('蛋白质'), U.fmtNum(det.intakeProtein), 'g', det.intakeProtein >= target ? 'blue' : '')
+      + statItem(T('目标蛋白'), String(target), 'g', '')
+      + statItem(T('已记录'), String(det.mealCount), T('项'), '')
       + '</div></div>';
 
     ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'].forEach(function (mt) {
@@ -315,20 +317,20 @@
       items.forEach(function (m) { sum += m.kcal; });
 
       h += '<div class="meal-block">'
-        + '<div class="meal-head"><div class="meal-name">' + DB.mealLabel(mt) + '</div>'
+        + '<div class="meal-head"><div class="meal-name">' + T(DB.mealLabel(mt)) + '</div>'
         + (items.length ? '<div class="meal-kcal">' + Math.round(sum) + ' kcal</div>' : '')
         + '<div class="spacer"></div>'
         + '<button class="add-btn small" data-act="open-meal" data-meal="' + mt + '">+</button></div>';
 
       if (!items.length) {
-        h += '<div class="meal-empty">还没有记录</div>';
+        h += '<div class="meal-empty">' + T('还没有记录') + '</div>';
       } else {
         h += '<div class="meal-items">';
         items.forEach(function (m) {
           var f = SEED.foodById(m.foodId);
           h += '<div class="food-row">'
             + '<div class="food-emoji">' + (f && f.emoji ? f.emoji : '🍽') + '</div>'
-            + '<div class="food-name">' + U.esc(m.foodName) + '</div>'
+            + '<div class="food-name">' + U.esc(T(m.foodName)) + '</div>'
             + '<div class="food-grams">' + U.fmtNum(m.grams) + 'g</div>'
             + '<div class="food-kcal">' + Math.round(m.kcal) + '<span class="u">kcal</span></div>'
             + '<button class="del-dot" style="width:22px;height:22px;font-size:11px" data-act="del" data-kind="meal" data-id="' + m.id + '">×</button>'
@@ -362,33 +364,33 @@
     }
 
     return '<div class="card">'
-      + '<div class="card-title">' + U.esc(p.name || '你的资料') + '</div>'
-      + '<div class="card-sub">' + (p.gender === 'MALE' ? '男' : '女') + ' · ' + p.age + ' 岁 · '
+      + '<div class="card-title">' + U.esc(p.name || T('你的资料')) + '</div>'
+      + '<div class="card-sub">' + (p.gender === 'MALE' ? T('男') : T('女')) + ' · ' + p.age + T(' 岁') + ' · '
       + U.fmtNum(p.heightCm) + 'cm · ' + U.fmtNum(p.weightKg) + 'kg</div>'
       + '<div class="stat-grid">'
-      + statItem('基础代谢', String(Math.round(tdee.bmr)), 'kcal', '')
-      + statItem('日消耗', String(Math.round(tdee.value)), 'kcal', 'green')
-      + statItem('目标缺口', String(rate), 'kcal', '')
+      + statItem(T('基础代谢'), String(Math.round(tdee.bmr)), 'kcal', '')
+      + statItem(T('日消耗'), String(Math.round(tdee.value)), 'kcal', 'green')
+      + statItem(T('目标缺口'), String(rate), 'kcal', '')
       + '</div>'
       + '<div class="week-strip" style="border-top:none">'
-      + '<span>' + (tdee.adaptive ? '已启用自适应 TDEE' : '按公式计算') + '</span>'
+      + '<span>' + (tdee.adaptive ? T('已启用自适应 TDEE') : T('按公式计算')) + '</span>'
       + '<span class="dim-text">' + (tdee.note || '') + '</span></div>'
       + '</div>'
 
-      + '<div class="section-head"><div class="section-title">设置</div></div>'
+      + '<div class="section-head"><div class="section-title">' + T('设置') + '</div></div>'
       + '<div class="card" style="padding:4px 14px">'
-      + row('open-profile', '个人资料', '性别、身高、体重、目标', '')
-      + row('open-theme', '外观', '', st.darkTheme ? '黑夜模式' : '白天模式')
-      + row('toggle-heat', '热量缺口警示', '关闭后日历不再标绿/红', st.heatWarn ? '开' : '关')
-      + row('open-export', '数据', '导出、导入、清空', '')
+      + row('open-profile', T('个人资料'), T('性别、身高、体重、目标'), '')
+      + row('open-theme', T('外观'), '', st.darkTheme ? T('黑夜模式') : T('白天模式'))
+      + row('toggle-heat', T('热量缺口警示'), T('关闭后日历不再标绿/红'), st.heatWarn ? T('开') : T('关'))
+      + row('open-export', T('数据'), T('导出、导入、清空'), '')
       + '</div>'
 
-      + '<div class="section-head"><div class="section-title">关于</div></div>'
+      + '<div class="section-head"><div class="section-title">' + T('关于') + '</div></div>'
       + '<div class="card" style="padding:14px">'
       + '<div class="card-sub" style="line-height:1.9">'
-      + 'Metri · 完全本地的减脂记录<br>'
-      + '无账号、无服务器、无上传，数据只存在这台设备的浏览器里。<br>'
-      + '蛋白质目标 ' + target + ' g/天 · 目标体重 ' + U.fmtNum(p.targetWeightKg) + ' kg'
+      + T('Metri · 完全本地的减脂记录') + '<br>'
+      + T('无账号、无服务器、无上传，数据只存在这台设备的浏览器里。') + '<br>'
+      + T('蛋白质目标 ') + target + T(' g/天 · 目标体重 ') + U.fmtNum(p.targetWeightKg) + T(' kg')
       + '</div></div>';
   }
 
@@ -396,7 +398,7 @@
     function t(v, label) {
       return '<button class="tab' + (S.view === v ? ' on' : '') + '" data-act="tab" data-v="' + v + '">' + label + '</button>';
     }
-    return '<nav class="tabbar">' + t('train', '训练') + t('diet', '饮食') + t('me', '我') + '</nav>';
+    return '<nav class="tabbar">' + t('train', T('训练')) + t('diet', T('饮食')) + t('me', T('我')) + '</nav>';
   }
 
   // ---------------------------------------------------------------- 引导页
@@ -406,26 +408,26 @@
     var p = st.profile;
     return '<div class="onboard">'
       + '<div class="brand">Metri</div>'
-      + '<h1>先了解一下你</h1>'
-      + '<div class="sub">这些只用来算你的基础代谢和目标，全部留在这台设备上'
-      + '<br><span class="dim-text">开始后会给你的日历填上一周示例记录，随时可清空</span></div>'
+      + '<h1>' + T('先了解一下你') + '</h1>'
+      + '<div class="sub">' + T('这些只用来算你的基础代谢和目标，全部留在这台设备上')
+      + '<br><span class="dim-text">' + T('示例数据只在你主动点「先看示例」时才会载入') + '</span></div>'
 
-      + '<div class="field"><label>怎么称呼你（可留空）</label>'
-      + '<input id="ob-name" maxlength="12" placeholder="例如 ivan"></div>'
+      + '<div class="field"><label>' + T('怎么称呼你（可留空）') + '</label>'
+      + '<input id="ob-name" maxlength="12" placeholder="' + T('例如 ivan') + '"></div>'
 
-      + '<div class="field"><label>性别</label><div class="seg">'
-      + '<button id="ob-male" class="on" data-act="ob-gender" data-v="MALE">男</button>'
-      + '<button id="ob-female" data-act="ob-gender" data-v="FEMALE">女</button></div></div>'
+      + '<div class="field"><label>' + T('性别') + '</label><div class="seg">'
+      + '<button id="ob-male" class="on" data-act="ob-gender" data-v="MALE">' + T('男') + '</button>'
+      + '<button id="ob-female" data-act="ob-gender" data-v="FEMALE">' + T('女') + '</button></div></div>'
 
       + '<div class="field-row">'
-      + '<div class="field"><label>年龄</label><input id="ob-age" type="number" inputmode="numeric" value="28"></div>'
-      + '<div class="field"><label>身高 cm</label><input id="ob-height" type="number" inputmode="decimal" value="178"></div>'
-      + '<div class="field"><label>体重 kg</label><input id="ob-weight" type="number" inputmode="decimal" value="78"></div>'
+      + '<div class="field"><label>' + T('年龄') + '</label><input id="ob-age" type="number" inputmode="numeric" value="28"></div>'
+      + '<div class="field"><label>' + T('身高 cm') + '</label><input id="ob-height" type="number" inputmode="decimal" value="178"></div>'
+      + '<div class="field"><label>' + T('体重 kg') + '</label><input id="ob-weight" type="number" inputmode="decimal" value="78"></div>'
       + '</div>'
 
       + '<div class="bmr-hint" id="ob-hint"></div>'
-      + '<button class="primary-btn" data-act="ob-done">开始记录</button>'
-      + '<button class="ghost-btn" data-act="ob-demo">不想填，先看示例数据</button>'
+      + '<button class="primary-btn" data-act="ob-done">' + T('开始记录') + '</button>'
+      + '<button class="ghost-btn" data-act="ob-demo">' + T('不想填，先看示例数据') + '</button>'
       + '</div>';
   }
 
@@ -453,9 +455,9 @@
     var tdee = M.tdeeBase(bmr, 1.2);
     var box = document.getElementById('ob-hint');
     if (box) {
-      box.innerHTML = '基础代谢 <b>' + Math.round(bmr) + '</b> kcal/天<br>'
-        + '按久坐估算的日消耗 <b>' + Math.round(tdee) + '</b> kcal<br>'
-        + '<span class="dim-text">训练消耗会单独加上，不重复计入</span>';
+      box.innerHTML = T('基础代谢 ') + '<b>' + Math.round(bmr) + '</b>' + T(' kcal/天') + '<br>'
+        + T('按久坐估算的日消耗 ') + '<b>' + Math.round(tdee) + '</b>' + T(' kcal/天') + '<br>'
+        + '<span class="dim-text">' + T('训练消耗会单独加上，不重复计入') + '</span>';
     }
   }
 
@@ -698,7 +700,7 @@
     });
     closeSheet();
     render();
-    toast('已记录 ' + ex.name + ' · 净消耗 ' + Math.round(net) + ' kcal');
+    toast(T('已记录 ') + T(ex.name) + T(' · 净消耗 ') + Math.round(net) + ' kcal');
   }
 
   function saveCardio() {
@@ -723,7 +725,7 @@
     });
     closeSheet();
     render();
-    toast('已记录 ' + t.name + ' · 净消耗 ' + Math.round(net) + ' kcal');
+    toast(T('已记录 ') + T(t.name) + T(' · 净消耗 ') + Math.round(net) + ' kcal');
   }
 
   function savePortion() {
@@ -748,7 +750,7 @@
     });
     closeSheet();
     render();
-    toast('已添加 ' + f.name + ' ' + Math.round(grams) + 'g · ' + kcal + ' kcal');
+    toast(T('已添加 ') + T(f.name) + ' ' + Math.round(grams) + 'g · ' + kcal + ' kcal');
   }
 
   function quickAdd(foodId) {
@@ -769,7 +771,7 @@
     });
     closeSheet();
     render();
-    toast('已添加 ' + f.name + ' · ' + kcal + ' kcal');
+    toast(T('已添加 ') + T(f.name) + ' · ' + kcal + ' kcal');
   }
 
   function runEstimate() {
@@ -798,7 +800,7 @@
       day: S.day,
       meal: meal,
       foodId: 'est_' + Date.now(),
-      foodName: S.overlay.query + (mult !== 1 ? '（' + mult + ' 份）' : ''),
+      foodName: S.overlay.query + (mult !== 1 ? T('（') + mult + T(' 份）') : ''),
       grams: Math.round(est.totalGrams * mult),
       servings: mult,
       servingUnit: est.servingUnit,
@@ -807,18 +809,18 @@
     });
     closeSheet();
     render();
-    toast('已添加 ' + kcal + ' kcal');
+    toast(T('已添加 ') + kcal + ' kcal');
   }
 
   function delRecord(kind, id) {
     DB.removeRecord(kind, id);
     render();
-    toast('已删除');
+    toast(T('已删除'));
   }
 
   function exportJson() {
     U.download('metri-backup-' + DB.ymd(DB.today()) + '.json', DB.exportJSON(), 'application/json');
-    toast('已导出 JSON 备份');
+    toast(T('已导出 JSON 备份'));
   }
 
   function exportCsv() {
@@ -829,7 +831,7 @@
         U.download(DB.ymd(DB.today()) + '-' + n, files[n], 'text/csv');
       }, i * 300);
     });
-    toast('正在导出 ' + names.length + ' 个 CSV');
+    toast(T('正在导出 ') + names.length + T(' 个 CSV'));
   }
 
   function importJson() {
@@ -845,9 +847,9 @@
           DB.importJSON(String(reader.result));
           closeSheet();
           render();
-          toast('已导入备份');
+          toast(T('已导入备份'));
         } catch (err) {
-          toast('这个文件不是 Metri 的备份');
+          toast(T('这个文件不是 Metri 的备份'));
         }
       };
       reader.readAsText(file);
@@ -856,14 +858,14 @@
   }
 
   function resetAll() {
-    if (!confirm('清空后所有记录都无法恢复。确定要先导出备份再清空吗？')) return;
+    if (!confirm(T('清空后所有记录都无法恢复。确定要先导出备份再清空吗？'))) return;
     DB.reset();
     S.day = DB.today();
     var t = DB.fromEpochDay(S.day);
     S.month = { y: t.y, m: t.m };
     closeSheet();
     render();
-    toast('已清空');
+    toast(T('已清空'));
   }
 
   /** 引导页的「先看示例」：灌入示例数据并直接进主界面，评委/新用户两步就能看到完整效果。 */
@@ -876,7 +878,7 @@
     var t = DB.fromEpochDay(S.day);
     S.month = { y: t.y, m: t.m };
     render();
-    toast('已载入示例数据，可在「我 → 数据」里清空');
+    toast(T('已载入示例数据，可在「我 → 数据」里清空'));
   }
 
   function finishOnboard() {
@@ -1067,6 +1069,12 @@
   function init() {
     seedDemo();
     var st = DB.get();
+
+    // 文档标题 / <html lang> 跟随当前语言
+    if (window.LANG === 'en') {
+      document.title = 'Metri · Deficit tracker';
+      document.documentElement.lang = 'en';
+    }
 
     // 便于直接分享某个页面：?view=diet&sheet=food&theme=light
     if (/[?&]theme=light/.test(location.search)) { st.darkTheme = false; DB.save(); }

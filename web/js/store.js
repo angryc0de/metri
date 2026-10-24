@@ -218,7 +218,7 @@
       value: rec.value,
       adaptive: ad.value,
       anomaly: rec.anomaly,
-      note: rec.note || ('样本 ' + ad.sampleDays + ' 天 · 日均摄入 ' + Math.round(ad.avgIntake) + ' kcal')
+      note: rec.note || (T('样本 ') + ad.sampleDays + T(' 天 · 日均摄入 ') + Math.round(ad.avgIntake) + ' kcal')
     };
   }
 
@@ -353,7 +353,7 @@
   }
 
   function mealLabel(key) {
-    return { BREAKFAST: '早餐', LUNCH: '午餐', DINNER: '晚餐', SNACK: '其他' }[key] || key;
+    return T({ BREAKFAST: '早餐', LUNCH: '午餐', DINNER: '晚餐', SNACK: '其他' }[key] || key);
   }
 
   function reset() {
