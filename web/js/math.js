@@ -123,7 +123,7 @@
   function adaptiveTdee(points, intakeByDay, previousEstimate, windowDays) {
     var win = windowDays == null ? 30 : windowDays;
     if (points.length < MIN_WEIGHT_POINTS) {
-      return { value: null, reason: '体重记录不足 ' + MIN_WEIGHT_POINTS + ' 天（当前 ' + points.length + ' 天）', sampleDays: 0 };
+      return { value: null, reason: T('体重记录不足 ') + MIN_WEIGHT_POINTS + T(' 天（当前 ') + points.length + T(' 天）'), sampleDays: 0 };
     }
     var sorted = points.slice().sort(function (a, b) { return a.day - b.day; });
     var span = sorted[sorted.length - 1].day - sorted[0].day + 1;
@@ -132,7 +132,7 @@
       return adaptiveTdee(sorted.filter(function (p) { return p.day > lastDay - win; }), intakeByDay, previousEstimate, win);
     }
     if (span < MIN_SPAN_DAYS) {
-      return { value: null, reason: '时间跨度不足 ' + MIN_SPAN_DAYS + ' 天（当前 ' + span + ' 天）', sampleDays: span };
+      return { value: null, reason: T('时间跨度不足 ') + MIN_SPAN_DAYS + T(' 天（当前 ') + span + T(' 天）'), sampleDays: span };
     }
 
     var firstDay = sorted[0].day, last = sorted[sorted.length - 1].day;
@@ -146,7 +146,7 @@
     if (observed.length < requiredDays) {
       return {
         value: null,
-        reason: '饮食记录完整度不足（' + span + ' 天里只有 ' + observed.length + ' 天，需 ' + requiredDays + ' 天）',
+        reason: T('饮食记录完整度不足（') + span + T(' 天里只有 ') + observed.length + T(' 天，需 ') + requiredDays + T(' 天）'),
         sampleDays: span
       };
     }
@@ -172,7 +172,7 @@
   function reconcileTdee(adaptive, formula) {
     var diff = adaptive - formula;
     if (Math.abs(diff) > ANOMALY_THRESHOLD) {
-      return { value: (adaptive + formula) / 2, anomaly: true, note: '数据波动较大，已取两者中位数' };
+      return { value: (adaptive + formula) / 2, anomaly: true, note: T('数据波动较大，已取两者中位数') };
     }
     return { value: adaptive, anomaly: false, note: null };
   }

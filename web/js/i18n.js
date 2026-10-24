@@ -194,7 +194,7 @@
     '体重记录不足 ': 'Needs ', ' 天（当前 ': ' weight days (now ',
     '时间跨度不足 ': 'Span under ',
     '饮食记录完整度不足（': 'Food logs incomplete (', ' 天里只有 ': ' days covered out of ', '，需 ': ', need ',
-    '天）': ' days)', '）': ')',
+    '天）': ' days)', ' 天）': ' days)', '）': ')', ' 天，需 ': ' days, need ',
     '数据波动较大，已取两者中位数': 'High variance — using the median of both'
   };
 
