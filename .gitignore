@@ -1,0 +1,28 @@
+# ---- Android 构建（保留原 Studio 模板并补全）----
+*.iml
+.gradle/
+build/
+app/build/
+local.properties
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+
+# ---- 签名与机密（永不入库）----
+keystore/
+
+# ---- 本地产物 / 实验 ----
+dist/
+backup/
+export-check/
+export-check2/
+screenshots/
+contest_page.html
+contest_text.txt
+ui*.xml
+
+# ---- IDE / 系统 ----
+.idea/
+.DS_Store
