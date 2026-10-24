@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.SeedData
 import com.leanlog.app.data.SettingsStore
+import com.leanlog.app.t
 import com.leanlog.app.ui.AppViewModel
 import com.leanlog.app.ui.ProfileField
 import com.leanlog.app.ui.components.Dot
@@ -64,25 +65,25 @@ fun ProteinSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val autoValue = Math.round(weight * 1.8).toInt()
 
     SheetShell(
-        title = "每日蛋白目标",
-        subtitle = "只影响蛋白进度条，不参与热量缺口计算",
+        title = t("每日蛋白目标"),
+        subtitle = t("只影响蛋白进度条，不参与热量缺口计算"),
         onDismiss = onDismiss,
         heightFraction = 0.68f,
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text("$grams", color = LL.Text, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                Text(" g / 天", color = LL.Dim, fontSize = 12.sp)
+                Text(t(" g / 天"), color = LL.Dim, fontSize = 12.sp)
                 Spacer(Modifier.weight(1f))
                 Text(
-                    if (profile.proteinAuto) "当前：自动" else "当前：自定义",
+                    if (profile.proteinAuto) t("当前：自动") else t("当前：自定义"),
                     color = if (profile.proteinAuto) LL.Muted else LL.Amber,
                     fontSize = 10.5.sp,
                 )
             }
 
             Spacer(Modifier.height(8.dp))
-            Text("按体重折算", color = LL.Dim, fontSize = 9.5.sp)
+            Text(t("按体重折算"), color = LL.Dim, fontSize = 9.5.sp)
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(1.2 to "维持", 1.6 to "减脂", 2.0 to "高强度").forEach { (factor, label) ->
@@ -100,7 +101,7 @@ fun ProteinSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                                 color = if (on) LL.Blue else LL.Muted,
                                 fontSize = 11.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Normal,
                             )
-                            Text("$label · $target g", color = LL.Dim, fontSize = 8.5.sp)
+                            Text("${t(label)} · $target g", color = LL.Dim, fontSize = 8.5.sp)
                         }
                     }
                 }
@@ -116,8 +117,8 @@ fun ProteinSheet(vm: AppViewModel, onDismiss: () -> Unit) {
 
             Spacer(Modifier.height(10.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GhostButton("取消", Modifier.weight(1f)) { onDismiss() }
-                PrimaryButton("保存 $grams g", Modifier.weight(1.4f)) {
+                GhostButton(t("取消"), Modifier.weight(1f)) { onDismiss() }
+                PrimaryButton("${t("保存 ")}$grams g", Modifier.weight(1.4f)) {
                     vm.setProteinTarget(grams, auto = false)
                 }
             }
@@ -129,7 +130,7 @@ fun ProteinSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        "恢复按体重自动计算（$autoValue g）",
+                        "${t("恢复按体重自动计算（")}$autoValue g${t("）")}",
                         color = LL.Muted, fontSize = 11.sp,
                     )
                 }
@@ -145,11 +146,11 @@ fun ProteinSheet(vm: AppViewModel, onDismiss: () -> Unit) {
 fun ProfileEditSheet(vm: AppViewModel, field: ProfileField, onDismiss: () -> Unit) {
     val p = vm.state.value.profile
     val (title, initial, suffix, hint, isNumber) = when (field) {
-        ProfileField.NAME -> Quint("姓名", p.name, "", "用于页面问候，可留空", false)
-        ProfileField.AGE -> Quint("年龄", p.age.toString(), "岁", "BMR 公式需要年龄，10–100", true)
-        ProfileField.HEIGHT -> Quint("身高", fmtNum(p.heightCm), "cm", "BMR 公式需要身高，120–230", true)
-        ProfileField.WEIGHT -> Quint("今天体重", fmtNum(p.weightKg), "kg", "记录后会写入体重曲线", true)
-        ProfileField.TARGET_WEIGHT -> Quint("目标体重", fmtNum(p.targetWeightKg), "kg", "减脂目标，仅用于展示", true)
+        ProfileField.NAME -> Quint(t("姓名"), p.name, "", t("用于页面问候，可留空"), false)
+        ProfileField.AGE -> Quint(t("年龄"), p.age.toString(), t("岁"), t("BMR 公式需要年龄，10–100"), true)
+        ProfileField.HEIGHT -> Quint(t("身高"), fmtNum(p.heightCm), "cm", t("BMR 公式需要身高，120–230"), true)
+        ProfileField.WEIGHT -> Quint(t("今天体重"), fmtNum(p.weightKg), "kg", t("记录后会写入体重曲线"), true)
+        ProfileField.TARGET_WEIGHT -> Quint(t("目标体重"), fmtNum(p.targetWeightKg), "kg", t("减脂目标，仅用于展示"), true)
         else -> Quint("", "", "", "", true)
     }
     var text by remember { mutableStateOf(initial) }
@@ -180,8 +181,8 @@ fun ProfileEditSheet(vm: AppViewModel, field: ProfileField, onDismiss: () -> Uni
             Text(hint, color = LL.Dim, fontSize = 10.sp)
             Spacer(Modifier.height(20.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GhostButton("取消", Modifier.weight(1f)) { onDismiss() }
-                PrimaryButton("保存", Modifier.weight(1f)) { vm.saveProfile(field, text) }
+                GhostButton(t("取消"), Modifier.weight(1f)) { onDismiss() }
+                PrimaryButton(t("保存"), Modifier.weight(1f)) { vm.saveProfile(field, text) }
             }
             Spacer(Modifier.height(20.dp))
         }
@@ -199,7 +200,7 @@ private data class Quint(
 @Composable
 fun GenderSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val current = vm.state.value.profile.gender
-    SheetShell(title = "性别", subtitle = "BMR 公式的常数项不同", onDismiss = onDismiss, heightFraction = 0.36f) {
+    SheetShell(title = t("性别"), subtitle = t("BMR 公式的常数项不同"), onDismiss = onDismiss, heightFraction = 0.36f) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             listOf("MALE" to "男", "FEMALE" to "女").forEach { (value, label) ->
                 val on = current == value
@@ -210,7 +211,7 @@ fun GenderSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                         .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(label, color = if (on) LL.Green else LL.Text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(t(label), color = if (on) LL.Green else LL.Text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(Modifier.weight(1f))
                     if (on) Text("✓", color = LL.Green, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
@@ -223,8 +224,8 @@ fun GenderSheet(vm: AppViewModel, onDismiss: () -> Unit) {
 fun ActivitySheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val current = vm.state.value.profile.activityFactor
     SheetShell(
-        title = "日常活动量",
-        subtitle = "只描述训练之外的日常，训练消耗单独计算",
+        title = t("日常活动量"),
+        subtitle = t("只描述训练之外的日常，训练消耗单独计算"),
         onDismiss = onDismiss,
         heightFraction = 0.6f,
     ) {
@@ -239,14 +240,14 @@ fun ActivitySheet(vm: AppViewModel, onDismiss: () -> Unit) {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            "${level.label} · ${fmtNum(level.factor)}",
+                            "${t(level.label)} · ${fmtNum(level.factor)}",
                             color = if (on) LL.Green else LL.Text,
                             fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.weight(1f))
                         if (on) Text("✓", color = LL.Green, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
-                    Text(level.desc, color = LL.Dim, fontSize = 9.5.sp)
+                    Text(t(level.desc), color = LL.Dim, fontSize = 9.5.sp)
                 }
             }
         }
@@ -257,8 +258,8 @@ fun ActivitySheet(vm: AppViewModel, onDismiss: () -> Unit) {
 fun RateSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val current = vm.state.value.profile.weeklyRateKg
     SheetShell(
-        title = "每周减重",
-        subtitle = "目标缺口 = 每周减重 × 7700 / 7",
+        title = t("每周减重"),
+        subtitle = t("目标缺口 = 每周减重 × 7700 / 7"),
         onDismiss = onDismiss,
         heightFraction = 0.45f,
     ) {
@@ -274,12 +275,12 @@ fun RateSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                 ) {
                     Column {
                         Text(
-                            "${fmtNum(rate)} kg / 周",
+                            "${fmtNum(rate)}${t(" kg / 周")}",
                             color = if (on) LL.Green else LL.Text,
                             fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            "每天目标缺口 ${Math.round(rate * 7700 / 7)} kcal",
+                            "${t("每天目标缺口 ")}${Math.round(rate * 7700 / 7)} kcal",
                             color = LL.Dim, fontSize = 9.5.sp,
                         )
                     }
@@ -288,7 +289,7 @@ fun RateSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                 }
             }
             Text(
-                "每周超过 1kg 的减重速度很难只掉脂肪，通常会带走肌肉。",
+                t("每周超过 1kg 的减重速度很难只掉脂肪，通常会带走肌肉。"),
                 color = LL.Dim, fontSize = 9.5.sp,
             )
         }
@@ -307,8 +308,8 @@ fun AiConfigSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     var showKey by remember { mutableStateOf(false) }
 
     SheetShell(
-        title = "AI 模型",
-        subtitle = "OpenAI 兼容接口，Key 只存在本机",
+        title = t("AI 模型"),
+        subtitle = t("OpenAI 兼容接口，Key 只存在本机"),
         onDismiss = onDismiss,
         heightFraction = 0.86f,
     ) {
@@ -333,36 +334,36 @@ fun AiConfigSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                     modifier = Modifier.weight(1f),
                 )
                 Text(
-                    if (showKey) "隐藏" else "显示",
+                    if (showKey) t("隐藏") else t("显示"),
                     color = LL.Dim, fontSize = 10.sp,
                     modifier = Modifier.clickable { showKey = !showKey },
                 )
             }
             Spacer(Modifier.height(12.dp))
 
-            FieldLabel("文本模型")
+            FieldLabel(t("文本模型"))
             Field(model, "glm-4-flash") { model = it }
             Spacer(Modifier.height(12.dp))
 
-            FieldLabel("图片识别模型（可留空）")
+            FieldLabel(t("图片识别模型（可留空）"))
             Field(visionModel, "glm-4v-flash") { visionModel = it }
 
             Spacer(Modifier.height(14.dp))
             Column(Modifier.fillMaxWidth().background(LL.Surface2, RoundedCornerShape(11.dp)).padding(12.dp)) {
-                Text("为什么必须自己填 Key", color = LL.Muted, fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(t("为什么必须自己填 Key"), color = LL.Muted, fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.height(5.dp))
                 Text(
-                    "Key 打进 APK 会被反编译提取，所以这个 App 不内置任何 Key。" +
-                        "填自己的 Key 后，热量估算和拍照识别才会真正联网；" +
-                        "不填也能用 —— 会走本地规则估算，只是精度低一些。",
+                    t("Key 打进 APK 会被反编译提取，所以这个 App 不内置任何 Key。") +
+                        t("填自己的 Key 后，热量估算和拍照识别才会真正联网；") +
+                        t("不填也能用 —— 会走本地规则估算，只是精度低一些。"),
                     color = LL.Dim, fontSize = 9.5.sp, lineHeight = 15.sp,
                 )
             }
 
             Spacer(Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GhostButton("取消", Modifier.weight(1f)) { onDismiss() }
-                PrimaryButton("保存", Modifier.weight(1.4f)) {
+                GhostButton(t("取消"), Modifier.weight(1f)) { onDismiss() }
+                PrimaryButton(t("保存"), Modifier.weight(1.4f)) {
                     vm.saveAiConfig(baseUrl, apiKey, model, visionModel)
                 }
             }
@@ -403,35 +404,35 @@ private fun Field(value: String, placeholder: String, onChange: (String) -> Unit
 fun ExportSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val state = vm.state.value
     SheetShell(
-        title = "数据导出",
-        subtitle = "备份能恢复，CSV 能拿去分析",
+        title = t("数据导出"),
+        subtitle = t("备份能恢复，CSV 能拿去分析"),
         onDismiss = onDismiss,
         heightFraction = 0.62f,
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
             Spacer(Modifier.height(8.dp))
-            ExportRow("JSON 全量备份", "个人资料、体重、饮食、力量、有氧，可用它恢复")
-            ExportRow("meals.csv", "每次进食一条，含克数与营养")
-            ExportRow("strength.csv", "每组力量训练与净消耗")
-            ExportRow("cardio.csv", "有氧参数、MET 与净消耗")
-            ExportRow("weight.csv", "体重记录")
-            ExportRow("daily.csv", "按天汇总的摄入、消耗与缺口，可直接做透视表")
+            ExportRow(t("JSON 全量备份"), t("个人资料、体重、饮食、力量、有氧，可用它恢复"))
+            ExportRow("meals.csv", t("每次进食一条，含克数与营养"))
+            ExportRow("strength.csv", t("每组力量训练与净消耗"))
+            ExportRow("cardio.csv", t("有氧参数、MET 与净消耗"))
+            ExportRow("weight.csv", t("体重记录"))
+            ExportRow("daily.csv", t("按天汇总的摄入、消耗与缺口，可直接做透视表"))
 
             Spacer(Modifier.height(14.dp))
             Column(Modifier.fillMaxWidth().background(LL.Surface2, RoundedCornerShape(11.dp)).padding(12.dp)) {
                 Text(
-                    "文件会同时写入系统「下载 / LeanLog」目录，并保留一份在应用私有目录里。",
+                    t("文件会同时写入系统「下载 / LeanLog」目录，并保留一份在应用私有目录里。"),
                     color = LL.Dim, fontSize = 9.5.sp, lineHeight = 15.sp,
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "目前共 ${state.detail.meals.size} 条饮食（当天）· 体重 ${state.weights.size} 条记录",
+                    "${t("目前共 ")}${state.detail.meals.size}${t(" 条饮食（当天）· 体重 ")}${state.weights.size}${t(" 条记录")}",
                     color = LL.Dim, fontSize = 9.5.sp,
                 )
             }
 
             Spacer(Modifier.height(16.dp))
-            PrimaryButton("导出全部格式", Modifier.fillMaxWidth()) { vm.exportData() }
+            PrimaryButton(t("导出全部格式"), Modifier.fillMaxWidth()) { vm.exportData() }
             Spacer(Modifier.height(20.dp))
         }
     }
@@ -443,8 +444,8 @@ fun ExportSheet(vm: AppViewModel, onDismiss: () -> Unit) {
 fun ThemeSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val dark = vm.state.value.darkTheme
     SheetShell(
-        title = "外观",
-        subtitle = "换肤立即生效，默认黑夜模式",
+        title = t("外观"),
+        subtitle = t("换肤立即生效，默认黑夜模式"),
         onDismiss = onDismiss,
         heightFraction = 0.46f,
     ) {
@@ -452,12 +453,12 @@ fun ThemeSheet(vm: AppViewModel, onDismiss: () -> Unit) {
             Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            ThemeCard("黑夜", dark, LL.Dark, Modifier.weight(1f)) { vm.setTheme(true) }
-            ThemeCard("白天", !dark, LL.Light, Modifier.weight(1f)) { vm.setTheme(false) }
+            ThemeCard(t("黑夜"), dark, LL.Dark, Modifier.weight(1f)) { vm.setTheme(true) }
+            ThemeCard(t("白天"), !dark, LL.Light, Modifier.weight(1f)) { vm.setTheme(false) }
         }
         Spacer(Modifier.height(10.dp))
         Text(
-            "两套皮肤只交换底色和文字，绿=缺口、红=超出、蓝=力量、黄=有氧的语义不变，换皮不改变任何判断。",
+            t("两套皮肤只交换底色和文字，绿=缺口、红=超出、蓝=力量、黄=有氧的语义不变，换皮不改变任何判断。"),
             color = LL.Dim, fontSize = 9.5.sp, lineHeight = 15.sp,
             modifier = Modifier.padding(horizontal = 18.dp),
         )
@@ -495,7 +496,7 @@ private fun ThemeCard(label: String, selected: Boolean, palette: Palette, modifi
         Spacer(Modifier.weight(1f))
         Text(label, color = palette.text, fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Text(
-            if (selected) "使用中" else "点按切换",
+            if (selected) t("使用中") else t("点按切换"),
             color = if (selected) palette.green else palette.dim,
             fontSize = 9.5.sp,
         )

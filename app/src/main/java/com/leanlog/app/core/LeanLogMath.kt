@@ -1,5 +1,6 @@
 package com.leanlog.app.core
 
+import com.leanlog.app.t
 import kotlin.math.max
 
 /**
@@ -106,7 +107,7 @@ object LeanLogMath {
         windowDays: Int = 30,
     ): AdaptiveTdeeResult {
         if (points.size < MIN_WEIGHT_POINTS) {
-            return AdaptiveTdeeResult(null, "体重记录不足 $MIN_WEIGHT_POINTS 天（当前 ${points.size} 天）")
+            return AdaptiveTdeeResult(null, "${t("体重记录不足 ")}$MIN_WEIGHT_POINTS${t(" 天（当前 ")}${points.size}${t(" 天）")}")
         }
         val sorted = points.sortedBy { it.day }
         val span = sorted.last().day - sorted.first().day + 1
@@ -114,13 +115,13 @@ object LeanLogMath {
             return adaptiveTdee(sorted.filter { it.day > sorted.last().day - windowDays }, intakeByDay, previousEstimate, windowDays)
         }
         if (span < MIN_SPAN_DAYS) {
-            return AdaptiveTdeeResult(null, "时间跨度不足 $MIN_SPAN_DAYS 天（当前 $span 天）")
+            return AdaptiveTdeeResult(null, "${t("时间跨度不足 ")}$MIN_SPAN_DAYS${t(" 天（当前 ")}$span${t(" 天）")}")
         }
 
         val observed = intakeByDay.filterKeys { it >= sorted.first().day && it <= sorted.last().day }
         val requiredDays = (span * MIN_INTAKE_COVERAGE).toInt()
         if (observed.size < requiredDays) {
-            return AdaptiveTdeeResult(null, "饮食记录完整度不足（$span 天里只有 ${observed.size} 天，需 $requiredDays 天）")
+            return AdaptiveTdeeResult(null, "${t("饮食记录完整度不足（")}$span${t(" 天里只有 ")}${observed.size}${t(" 天，需 ")}$requiredDays${t(" 天）")}")
         }
 
         val avgIntake = observed.values.average()
@@ -163,7 +164,7 @@ object LeanLogMath {
             Reconciliation(
                 value = (adaptive + formula) / 2.0,
                 anomaly = true,
-                note = "数据波动较大，已取两者中位数",
+                note = t("数据波动较大，已取两者中位数"),
             )
         } else {
             Reconciliation(value = adaptive, anomaly = false, note = null)

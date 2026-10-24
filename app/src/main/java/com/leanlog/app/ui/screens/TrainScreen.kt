@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.domain.CardioParams
+import com.leanlog.app.t
 import com.leanlog.app.ui.UiState
 import com.leanlog.app.ui.components.Dot
 import com.leanlog.app.ui.components.EmptyHint
@@ -79,17 +80,17 @@ fun TrainScreen(
                 DayStatCard(state)
 
                 SectionWithAdd(
-                    title = "力量训练",
+                    title = t("力量训练"),
                     count = state.detail.strength.size,
                     tint = LL.StrengthDot,
                     onAdd = onAddStrength,
                 )
                 if (state.detail.strength.isEmpty()) {
-                    EmptyHint("还没有力量记录，点上面的 + 添加")
+                    EmptyHint(t("还没有力量记录，点上面的 + 添加"))
                 } else {
                     state.detail.strength.forEach { record ->
                         StrengthRow(
-                            name = record.exerciseName,
+                            name = t(record.exerciseName),
                             exerciseId = record.exerciseId,
                             weight = if (record.bodyweight) null else record.weightKg,
                             reps = record.reps,
@@ -102,19 +103,19 @@ fun TrainScreen(
                 }
 
                 SectionWithAdd(
-                    title = "有氧训练",
+                    title = t("有氧训练"),
                     count = state.detail.cardio.size,
                     tint = LL.CardioDot,
                     onAdd = onAddCardio,
                 )
                 if (state.detail.cardio.isEmpty()) {
-                    EmptyHint("还没有有氧记录")
+                    EmptyHint(t("还没有有氧记录"))
                 } else {
                     state.detail.cardio.forEach { record ->
                         val type = SeedData.cardioById(record.typeId)
                         CardioRow(
                             typeId = record.typeId,
-                            name = record.typeName,
+                            name = t(record.typeName),
                             summary = type?.let {
                                 CardioParams.summary(it, CardioParams.decode(record.paramsJson), record.enumValue)
                             } ?: "—",
@@ -138,7 +139,7 @@ private fun DayStatCard(state: UiState) {
             Column {
                 Text(com.leanlog.app.ui.formatDayTitle(detail.day), color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    "基础消耗 ${tdee.toInt()} kcal" + if (detail.hasWorkout) " · 训练净消耗 ${detail.workoutNet.toInt()} kcal" else "",
+                    t("基础消耗 ") + "${tdee.toInt()} kcal" + if (detail.hasWorkout) " · " + t("训练净消耗 ") + "${detail.workoutNet.toInt()} kcal" else "",
                     color = LL.Muted, fontSize = 10.5.sp,
                 )
             }
@@ -157,9 +158,9 @@ private fun DayStatCard(state: UiState) {
                 }
                 // 「缺口」这个词本身已经含了负号的意思，数字再带 "-" 等于说了两遍。
                 // 超出时反过来换成「超出」，避免出现「热量缺口 -300」这种自相矛盾的写法。
-                Text(if (deficit >= 0) "热量缺口" else "热量超出", color = LL.Muted, fontSize = 10.sp)
+                Text(if (deficit >= 0) t("热量缺口") else t("热量超出"), color = LL.Muted, fontSize = 10.sp)
                 Text(
-                    if (recorded) "${kotlin.math.abs(deficit)} kcal" else "未记录",
+                    if (recorded) "${kotlin.math.abs(deficit)} kcal" else t("未记录"),
                     color = color,
                     fontSize = if (recorded) 17.sp else 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -173,21 +174,21 @@ private fun DayStatCard(state: UiState) {
                     .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("本周", color = LL.Dim, fontSize = 10.sp)
+                Text(t("本周"), color = LL.Dim, fontSize = 10.sp)
                 Spacer(Modifier.size(8.dp))
                 Text(
-                    "平均缺口 ${state.week.avgDeficit ?: 0}",
+                    t("平均缺口 ") + "${state.week.avgDeficit ?: 0}",
                     color = LL.Muted, fontSize = 11.sp, fontWeight = FontWeight.Medium,
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    "达标 ${state.week.hitDays}/${state.week.recordedDays} 天",
+                    t("达标 ") + "${state.week.hitDays}/${state.week.recordedDays} " + t("天"),
                     // 关掉缺口警示后整页都不该再出现绿色，否则"关了还在提醒"
                     color = if (state.heatWarn) LL.Green else LL.Muted,
                     fontSize = 11.sp, fontWeight = FontWeight.SemiBold,
                 )
                 Spacer(Modifier.size(4.dp))
-                Text("（目标 ${state.week.target}）", color = LL.Dim, fontSize = 9.sp)
+                Text(t("（目标 ") + "${state.week.target}）", color = LL.Dim, fontSize = 9.sp)
             }
         }
     }
@@ -201,7 +202,7 @@ private fun SectionWithAdd(title: String, count: Int, tint: Color, onAdd: () -> 
         Text(title, color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Bold)
         if (count > 0) {
             Spacer(Modifier.size(6.dp))
-            Text("$count 项", color = LL.Dim, fontSize = 10.sp)
+            Text("$count " + t("项"), color = LL.Dim, fontSize = 10.sp)
         }
         Spacer(Modifier.weight(1f))
         Box(
@@ -239,8 +240,8 @@ private fun StrengthRow(
             Spacer(Modifier.height(2.dp))
             Text(
                 buildString {
-                    append(if (weight == null) "自重" else "${fmtNum(weight)} kg")
-                    append(" × $reps 次 × $sets 组")
+                    append(if (weight == null) t("自重") else "${fmtNum(weight)} kg")
+                    append(" × $reps " + t("次") + " × $sets " + t("组"))
                 },
                 color = LL.Muted, fontSize = 11.sp,
             )
@@ -252,7 +253,7 @@ private fun StrengthRow(
                 Text("${netKcal.toInt()}", color = LL.Blue, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Text(" kcal", color = LL.Dim, fontSize = 9.sp)
             }
-            Text("净消耗", color = LL.Dim, fontSize = 9.sp)
+            Text(t("净消耗"), color = LL.Dim, fontSize = 9.sp)
         }
         Spacer(Modifier.size(10.dp))
         DeleteDot(onDelete)
@@ -288,7 +289,7 @@ private fun CardioRow(
                 Text("${netKcal.toInt()}", color = LL.Amber, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Text(" kcal", color = LL.Dim, fontSize = 9.sp)
             }
-            Text("净消耗", color = LL.Dim, fontSize = 9.sp)
+            Text(t("净消耗"), color = LL.Dim, fontSize = 9.sp)
         }
         Spacer(Modifier.size(10.dp))
         DeleteDot(onDelete)

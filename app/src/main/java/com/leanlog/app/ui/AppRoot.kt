@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.view.WindowCompat
+import com.leanlog.app.t
 import com.leanlog.app.ui.components.Dot
 import com.leanlog.app.ui.screens.DietScreen
 import com.leanlog.app.ui.screens.MeScreen
@@ -229,10 +230,10 @@ fun LeanLogApp(vm: AppViewModel) {
                 ) {
                     Dot(LL.Purple, 10.dp)
                     Spacer(Modifier.height(10.dp))
-                    Text("AI 正在估算…", color = LL.Text, fontSize = 12.5.sp)
+                    Text(t("AI 正在估算…"), color = LL.Text, fontSize = 12.5.sp)
                     // 实测 glm-4-flash 免费档一次要 15–20 秒，高峰期更久。
                     // 写「1–3 秒」会让人以为卡死了，直接点重试。
-                    Text("通常 10–20 秒，免费模型高峰期更久", color = LL.Dim, fontSize = 9.5.sp)
+                    Text(t("通常 10–20 秒，免费模型高峰期更久"), color = LL.Dim, fontSize = 9.5.sp)
                 }
             }
         }
@@ -254,7 +255,7 @@ fun LeanLogApp(vm: AppViewModel) {
                     if (msg.undo != null) {
                         Spacer(Modifier.size(12.dp))
                         Text(
-                            "撤销",
+                            t("撤销"),
                             color = LL.Green, fontSize = 11.5.sp, fontWeight = FontWeight.Bold,
                             modifier = Modifier.clickable {
                                 msg.undo.invoke()
@@ -298,13 +299,13 @@ private fun TopBar(state: UiState) {
             // 左：谁在用。姓名是引导页填的，没填就用一句招呼兜着，不留空。
             Column(Modifier.weight(1f)) {
                 Text(
-                    state.profile.name.ifBlank { "你好" },
+                    state.profile.name.ifBlank { t("你好") },
                     color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold,
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(1.dp))
                 Text(
-                    "今天 · ${com.leanlog.app.ui.formatDayTitle(state.today)}",
+                    t("今天 · ") + com.leanlog.app.ui.formatDayTitle(state.today),
                     color = LL.Muted, fontSize = 10.sp,
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
@@ -333,9 +334,9 @@ private fun BottomBar(tab: Tab, onSelect: (Tab) -> Unit) {
             Modifier.fillMaxWidth().background(LL.Surface).navigationBarsPadding().padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            TabItem("训练", tab == Tab.TRAIN) { onSelect(Tab.TRAIN) }
-            TabItem("饮食", tab == Tab.DIET) { onSelect(Tab.DIET) }
-            TabItem("我", tab == Tab.ME) { onSelect(Tab.ME) }
+            TabItem(t("训练"), tab == Tab.TRAIN) { onSelect(Tab.TRAIN) }
+            TabItem(t("饮食"), tab == Tab.DIET) { onSelect(Tab.DIET) }
+            TabItem(t("我"), tab == Tab.ME) { onSelect(Tab.ME) }
         }
     }
 }

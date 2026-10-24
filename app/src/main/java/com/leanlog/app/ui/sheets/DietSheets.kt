@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.FoodEstimate
 import com.leanlog.app.core.MealType
 import com.leanlog.app.data.FoodEntity
+import com.leanlog.app.t
 import com.leanlog.app.ui.AppViewModel
 import com.leanlog.app.ui.PortionDraft
 import com.leanlog.app.ui.components.FullScreenPage
@@ -63,12 +64,12 @@ fun FoodSearchSheet(
     onDismiss: () -> Unit,
 ) {
     SheetShell(
-        title = "添加到${meal.label}",
-        subtitle = "输入食物名，或直接描述「牛肉减脂便当」",
+        title = "${t("添加到")}${t(meal.label)}",
+        subtitle = t("输入食物名，或直接描述「牛肉减脂便当」"),
         onDismiss = onDismiss,
     ) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp)) {
-            SearchField(query, "搜索食物 / 描述这一餐", onValueChange = { vm.searchFoods(it) })
+            SearchField(query, t("搜索食物 / 描述这一餐"), onValueChange = { vm.searchFoods(it) })
             if (query.isNotBlank()) {
                 Spacer(Modifier.height(10.dp))
                 Box(
@@ -76,7 +77,7 @@ fun FoodSearchSheet(
                         .clickable { vm.runAiSearch(query, meal) }
                         .padding(horizontal = 11.dp, vertical = 7.dp),
                 ) {
-                    Text("✨ 让 AI 拆解「$query」", color = LL.Purple, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Text("✨ ${t("让 AI 拆解「")}$query${t("」")}", color = LL.Purple, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -87,7 +88,7 @@ fun FoodSearchSheet(
         ) {
             if (query.isBlank() && recent.isNotEmpty()) {
                 item {
-                    Text("最近吃过 · 点一下直接记", color = LL.Dim, fontSize = 10.sp)
+                    Text(t("最近吃过 · 点一下直接记"), color = LL.Dim, fontSize = 10.sp)
                     Spacer(Modifier.height(7.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
                         items(recent.size) { i ->
@@ -98,7 +99,7 @@ fun FoodSearchSheet(
                                     .padding(horizontal = 11.dp, vertical = 8.dp),
                             ) {
                                 Text(
-                                    "${food.emoji ?: "🍽"} ${food.name}",
+                                    "${food.emoji ?: "🍽"} ${t(food.name)}",
                                     color = LL.Text, fontSize = 11.5.sp,
                                 )
                             }
@@ -114,9 +115,9 @@ fun FoodSearchSheet(
                         Modifier.fillMaxWidth().background(LL.Surface2, RoundedCornerShape(12.dp)).padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text("本地库没有匹配", color = LL.Muted, fontSize = 12.sp)
+                        Text(t("本地库没有匹配"), color = LL.Muted, fontSize = 12.sp)
                         Spacer(Modifier.height(4.dp))
-                        Text("点上面的「让 AI 拆解」估算这一餐", color = LL.Dim, fontSize = 10.sp)
+                        Text(t("点上面的「让 AI 拆解」估算这一餐"), color = LL.Dim, fontSize = 10.sp)
                     }
                 }
             }
@@ -135,15 +136,15 @@ fun FoodSearchSheet(
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(food.name, color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(t(food.name), color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             if (food.source != "BUILTIN") {
                                 Spacer(Modifier.width(6.dp))
-                                Pill(if (food.source == "AI") "AI" else "自建", LL.Purple)
+                                Pill(if (food.source == "AI") "AI" else t("自建"), LL.Purple)
                             }
                         }
                         Text(
                             "${food.kcalPer100g.toInt()} kcal / 100g" +
-                                (food.servingUnit?.let { " · 1$it ≈ ${fmtNum(food.servingGrams ?: 0.0)}g" } ?: ""),
+                                (food.servingUnit?.let { " · 1${t(it)} ≈ ${fmtNum(food.servingGrams ?: 0.0)}g" } ?: ""),
                             color = LL.Dim, fontSize = 9.5.sp,
                         )
                     }
@@ -173,14 +174,14 @@ fun PortionSheet(
     val protein = draft.proteinPer100g * grams / 100.0
 
     SheetShell(
-        title = draft.name,
+        title = t(draft.name),
         subtitle = "${draft.kcalPer100g.toInt()} kcal / 100g",
         onDismiss = onDismiss,
         heightFraction = 0.62f,
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
             Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("按${if (byUnit) "份" else "克"}记录", color = LL.Text, fontSize = 12.sp)
+                Text("${t("按")}${if (byUnit) t("份") else t("克")}${t("记录")}", color = LL.Text, fontSize = 12.sp)
                 Spacer(Modifier.weight(1f))
                 ToggleSwitch(checked = byUnit) { toUnit ->
                     // 切换单位时保持「同一份食物」的克数不变，否则 1 份会突然变成 1 克
@@ -196,7 +197,7 @@ fun PortionSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text(if (byUnit) "数量（$unit）" else "克数（g）", color = LL.Muted, fontSize = 9.5.sp)
+                    Text(if (byUnit) "${t("数量（")}$unit${t("）")}" else t("克数（g）"), color = LL.Muted, fontSize = 9.5.sp)
                     Row(verticalAlignment = Alignment.Bottom) {
                         BasicTextField(
                             value = qtyText,
@@ -206,12 +207,12 @@ fun PortionSheet(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.width(96.dp),
                         )
-                        Text(if (byUnit) unit else "g", color = LL.Dim, fontSize = 12.sp)
+                        Text(if (byUnit) t(unit) else "g", color = LL.Dim, fontSize = 12.sp)
                     }
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text("${kcal.toInt()} kcal", color = LL.Green, fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                    Text("蛋白 ${fmtNum(protein)} g", color = LL.Muted, fontSize = 10.sp)
+                    Text("${t("蛋白 ")}${fmtNum(protein)} g", color = LL.Muted, fontSize = 10.sp)
                 }
             }
 
@@ -226,7 +227,7 @@ fun PortionSheet(
                             .padding(horizontal = 12.dp, vertical = 7.dp),
                     ) {
                         Text(
-                            if (byUnit) "${fmtNum(q)}$unit" else "${q.toInt()}g",
+                            if (byUnit) "${fmtNum(q)}${t(unit)}" else "${q.toInt()}g",
                             color = LL.Muted, fontSize = 11.sp,
                         )
                     }
@@ -239,7 +240,7 @@ fun PortionSheet(
                 val options = remember { (1..40).map { it * 0.5 } }
                 val idx = options.indexOfFirst { it >= qty }.let { if (it < 0) 1 else it }
                 WheelPicker(
-                    items = options.map { fmtNum(it) + unit },
+                    items = options.map { fmtNum(it) + t(unit) },
                     index = idx,
                     modifier = Modifier.fillMaxWidth(),
                     onIndexChange = { i -> qtyText = fmtNum(options[i]) },
@@ -248,9 +249,9 @@ fun PortionSheet(
 
             Spacer(Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GhostButton("取消", Modifier.weight(1f)) { onDismiss() }
+                GhostButton(t("取消"), Modifier.weight(1f)) { onDismiss() }
                 PrimaryButton(
-                    if (draft.editId == null) "添加" else "保存",
+                    if (draft.editId == null) t("添加") else t("保存"),
                     Modifier.weight(1.4f),
                     enabled = grams > 0,
                 ) {
@@ -284,12 +285,12 @@ fun AiResultPage(
     val totalFat = estimate.totalFat * multiplier
 
     FullScreenPage(
-        title = query.ifBlank { "AI 估算" },
-        subtitle = if (estimate.fromAi) "AI 拆解 · 可逐项核对" else "本地规则估算 · 未连 AI",
+        title = query.ifBlank { t("AI 估算") },
+        subtitle = if (estimate.fromAi) t("AI 拆解 · 可逐项核对") else t("本地规则估算 · 未连 AI"),
         onBack = onBack,
         footer = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GhostButton("改份量", Modifier.weight(1f)) {
+                GhostButton(t("改份量"), Modifier.weight(1f)) {
                     vm.openPortion(
                         FoodEntity(
                             id = "ai_tmp_" + System.currentTimeMillis(),
@@ -310,7 +311,7 @@ fun AiResultPage(
                         meal = meal,
                     )
                 }
-                PrimaryButton("添加 $totalKcal kcal", Modifier.weight(1.5f)) {
+                PrimaryButton("${t("添加 ")}$totalKcal kcal", Modifier.weight(1.5f)) {
                     vm.confirmAiResult(estimate, meal, multiplier)
                 }
             }
@@ -323,25 +324,25 @@ fun AiResultPage(
                     Text("🍱", fontSize = 22.sp)
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(query.ifBlank { "AI 估算" }, color = LL.Text, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(query.ifBlank { t("AI 估算") }, color = LL.Text, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
-                            "${fmtNum(estimate.servingQty * multiplier)} ${estimate.servingUnit} · 约 ${(estimate.totalGrams * multiplier).toInt()} g",
+                            "${fmtNum(estimate.servingQty * multiplier)} ${t(estimate.servingUnit)}${t(" · 约 ")}${(estimate.totalGrams * multiplier).toInt()} g",
                             color = LL.Muted, fontSize = 10.5.sp,
                         )
                     }
-                    if (estimate.fromAi) Pill("AI 估算", LL.Purple) else Pill("本地估算", LL.Amber)
+                    if (estimate.fromAi) Pill(t("AI 估算"), LL.Purple) else Pill(t("本地估算"), LL.Amber)
                 }
                 Spacer(Modifier.height(12.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Macro("热量", totalKcal.toDouble(), "kcal", LL.Text)
-                    Macro("蛋白", totalProtein, "g", LL.Blue)
-                    Macro("碳水", totalCarb, "g", LL.Amber)
-                    Macro("脂肪", totalFat, "g", LL.Purple)
+                    Macro(t("热量"), totalKcal.toDouble(), "kcal", LL.Text)
+                    Macro(t("蛋白"), totalProtein, "g", LL.Blue)
+                    Macro(t("碳水"), totalCarb, "g", LL.Amber)
+                    Macro(t("脂肪"), totalFat, "g", LL.Purple)
                 }
             }
 
             Spacer(Modifier.height(12.dp))
-            Text("拆解（可核对，不必全信）", color = LL.Muted, fontSize = 10.5.sp)
+            Text(t("拆解（可核对，不必全信）"), color = LL.Muted, fontSize = 10.5.sp)
             Spacer(Modifier.height(6.dp))
 
             estimate.items.forEach { item ->
@@ -352,9 +353,9 @@ fun AiResultPage(
                     Box(Modifier.size(5.dp).background(LL.Faint, CircleShape))
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(item.name, color = LL.Text, fontSize = 12.5.sp)
+                        Text(t(item.name), color = LL.Text, fontSize = 12.5.sp)
                         Text(
-                            "${fmtNum(item.grams * multiplier)} g · 蛋白 ${fmtNum(item.protein * multiplier)} g",
+                            "${fmtNum(item.grams * multiplier)} g${t(" · 蛋白 ")}${fmtNum(item.protein * multiplier)} g",
                             color = LL.Dim, fontSize = 9.5.sp,
                         )
                     }
@@ -377,7 +378,7 @@ fun AiResultPage(
             }
 
             Spacer(Modifier.height(14.dp))
-            Text("份量倍数：${fmtNum(multiplier)} 份", color = LL.Muted, fontSize = 10.5.sp)
+            Text("${t("份量倍数：")}${fmtNum(multiplier)}${t(" 份")}", color = LL.Muted, fontSize = 10.5.sp)
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(0.5, 0.75, 1.0, 1.25, 1.5).forEach { m ->

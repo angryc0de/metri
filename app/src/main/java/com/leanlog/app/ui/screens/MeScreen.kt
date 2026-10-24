@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.SeedData
 import com.leanlog.app.data.WeightLogEntity
+import com.leanlog.app.t
 import com.leanlog.app.ui.ProfileField
 import com.leanlog.app.ui.UiState
 import com.leanlog.app.ui.components.LCard
@@ -62,7 +63,7 @@ fun MeScreen(
             LCard {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                     Column(Modifier.weight(1f)) {
-                        Text("当前体重", color = LL.Muted, fontSize = 10.sp)
+                        Text(t("当前体重"), color = LL.Muted, fontSize = 10.sp)
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
                                 fmtNum(profile.weightKg),
@@ -79,7 +80,7 @@ fun MeScreen(
                             }
                         }
                         Text(
-                            "目标 ${fmtNum(profile.targetWeightKg)} kg · 每周 ${fmtNum(profile.weeklyRateKg)} kg",
+                            t("目标 ") + "${fmtNum(profile.targetWeightKg)} kg · " + t("每周 ") + "${fmtNum(profile.weeklyRateKg)} kg",
                             color = LL.Muted, fontSize = 10.5.sp,
                         )
                     }
@@ -88,7 +89,7 @@ fun MeScreen(
                             .clickable { onEditProfile(ProfileField.WEIGHT) }
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                     ) {
-                        Text("记录体重", color = LL.Green, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(t("记录体重"), color = LL.Green, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -97,15 +98,15 @@ fun MeScreen(
                     WeightChart(state.weights)
                     Spacer(Modifier.height(6.dp))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        ChartLegend(LL.Green, "日体重")
-                        ChartLegend(LL.Blue, "7 日平均")
+                        ChartLegend(LL.Green, t("日体重"))
+                        ChartLegend(LL.Blue, t("7 日平均"))
                         Spacer(Modifier.weight(1f))
-                        Text("${state.weights.size} 条记录", color = LL.Dim, fontSize = 9.sp)
+                        Text("${state.weights.size} " + t("条记录"), color = LL.Dim, fontSize = 9.sp)
                     }
                 } else {
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        "再记录几天体重，这里会出现趋势曲线。单日体重波动 ±1kg 多半是水，看趋势才有意义。",
+                        t("再记录几天体重，这里会出现趋势曲线。单日体重波动 ±1kg 多半是水，看趋势才有意义。"),
                         color = LL.Dim, fontSize = 10.sp,
                     )
                 }
@@ -114,13 +115,13 @@ fun MeScreen(
 
         item {
             LCard {
-                Text("能量消耗估算", color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text(t("能量消耗估算"), color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    EnergyStat("基础代谢", state.tdeeFormula / profile.activityFactor, LL.Text)
-                    EnergyStat("公式消耗", state.tdeeFormula, LL.Muted)
+                    EnergyStat(t("基础代谢"), state.tdeeFormula / profile.activityFactor, LL.Text)
+                    EnergyStat(t("公式消耗"), state.tdeeFormula, LL.Muted)
                     EnergyStat(
-                        "实测消耗",
+                        t("实测消耗"),
                         state.tdeeAdaptive ?: 0.0,
                         if (state.tdeeAdaptive != null) LL.Green else LL.Dim,
                         showUnknown = state.tdeeAdaptive == null,
@@ -129,7 +130,7 @@ fun MeScreen(
                 Spacer(Modifier.height(10.dp))
                 Text(
                     state.adaptiveNote
-                        ?: "实测消耗由最近 30 天的「摄入 − 体重变化」反推，比公式更贴近你自己。日历颜色用的是这个值。",
+                        ?: t("实测消耗由最近 30 天的「摄入 − 体重变化」反推，比公式更贴近你自己。日历颜色用的是这个值。"),
                     color = if (state.adaptiveNote != null) LL.Amber else LL.Dim,
                     fontSize = 10.sp,
                 )
@@ -137,45 +138,45 @@ fun MeScreen(
         }
 
         item {
-            ProfileGroup("个人信息") {
-                MeRow("姓名", profile.name.ifBlank { "未填写" }) { onEditProfile(ProfileField.NAME) }
-                MeRow("性别", if (profile.gender == "FEMALE") "女" else "男") { onEditProfile(ProfileField.GENDER) }
-                MeRow("年龄", "${profile.age} 岁") { onEditProfile(ProfileField.AGE) }
-                MeRow("身高", "${fmtNum(profile.heightCm)} cm") { onEditProfile(ProfileField.HEIGHT) }
-                MeRow("日常活动量", activityLabel(profile.activityFactor)) {
+            ProfileGroup(t("个人信息")) {
+                MeRow(t("姓名"), profile.name.ifBlank { t("未填写") }) { onEditProfile(ProfileField.NAME) }
+                MeRow(t("性别"), if (profile.gender == "FEMALE") t("女") else t("男")) { onEditProfile(ProfileField.GENDER) }
+                MeRow(t("年龄"), "${profile.age} " + t("岁")) { onEditProfile(ProfileField.AGE) }
+                MeRow(t("身高"), "${fmtNum(profile.heightCm)} cm") { onEditProfile(ProfileField.HEIGHT) }
+                MeRow(t("日常活动量"), activityLabel(profile.activityFactor)) {
                     onEditProfile(ProfileField.ACTIVITY)
                 }
-                MeRow("目标体重", "${fmtNum(profile.targetWeightKg)} kg") {
+                MeRow(t("目标体重"), "${fmtNum(profile.targetWeightKg)} kg") {
                     onEditProfile(ProfileField.TARGET_WEIGHT)
                 }
-                MeRow("每周减重", "${fmtNum(profile.weeklyRateKg)} kg") { onEditProfile(ProfileField.RATE) }
+                MeRow(t("每周减重"), "${fmtNum(profile.weeklyRateKg)} kg") { onEditProfile(ProfileField.RATE) }
                 MeRow(
-                    "每日蛋白目标",
-                    "${state.proteinTarget} g · " + if (profile.proteinAuto) "自动" else "自定义",
+                    t("每日蛋白目标"),
+                    "${state.proteinTarget} g · " + if (profile.proteinAuto) t("自动") else t("自定义"),
                 ) { onProteinSetting() }
             }
         }
 
         item {
-            ProfileGroup("设置") {
-                MeRow("外观", if (state.darkTheme) "黑夜模式" else "白天模式") { onTheme() }
+            ProfileGroup(t("设置")) {
+                MeRow(t("外观"), if (state.darkTheme) t("黑夜模式") else t("白天模式")) { onTheme() }
                 Row(
                     Modifier.fillMaxWidth().padding(vertical = 11.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text("热量缺口警示", color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
+                        Text(t("热量缺口警示"), color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
                         Text(
-                            "关闭后日历不再按缺口标绿/红，只保留中性数字",
+                            t("关闭后日历不再按缺口标绿/红，只保留中性数字"),
                             color = LL.Dim, fontSize = 9.5.sp,
                         )
                     }
                     ToggleSwitch(checked = state.heatWarn) { onToggleHeatWarn() }
                 }
-                MeRow("AI 模型", "OpenAI 兼容接口") { onAiConfig() }
-                MeRow("数据导出", "JSON 备份 + CSV") { onExport() }
-                MeRow("关于", "Metri v1.0 · 本地记录 · 无账号") {
-                    onToast("所有数据只存在这台设备上，没有账号也没有云端")
+                MeRow(t("AI 模型"), t("OpenAI 兼容接口")) { onAiConfig() }
+                MeRow(t("数据导出"), t("JSON 备份 + CSV")) { onExport() }
+                MeRow(t("关于"), "Metri v1.0 · " + t("本地记录 · 无账号")) {
+                    onToast(t("所有数据只存在这台设备上，没有账号也没有云端"))
                 }
             }
         }
@@ -184,7 +185,7 @@ fun MeScreen(
 
 private fun activityLabel(factor: Double): String {
     val level = SeedData.activityLevels.minByOrNull { kotlin.math.abs(it.factor - factor) }
-    return level?.label ?: "久坐"
+    return level?.label?.let { t(it) } ?: t("久坐")
 }
 
 @Composable
@@ -202,7 +203,7 @@ private fun EnergyStat(label: String, value: Double, color: Color, showUnknown: 
         Text(label, color = LL.Dim, fontSize = 9.5.sp)
         Spacer(Modifier.height(3.dp))
         Text(
-            if (showUnknown) "待积累" else "${value.toInt()}",
+            if (showUnknown) t("待积累") else "${value.toInt()}",
             color = color,
             fontSize = if (showUnknown) 11.sp else 15.sp,
             fontWeight = FontWeight.Bold,

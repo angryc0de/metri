@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.Gender
 import com.leanlog.app.core.LeanLogMath
+import com.leanlog.app.t
 import com.leanlog.app.ui.components.PrimaryButton
 import com.leanlog.app.ui.components.WheelPicker
 import com.leanlog.app.ui.theme.LL
@@ -69,16 +70,16 @@ fun OnboardingPage(onDone: (String, Gender, Int, Double, Double) -> Unit) {
             fontWeight = FontWeight.Black, fontStyle = FontStyle.Italic,
         )
         Spacer(Modifier.height(12.dp))
-        Text("先了解一下你", color = LL.Text, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+        Text(t("先了解一下你"), color = LL.Text, fontSize = 26.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(9.dp))
         Text(
-            "这几个数决定你的基础代谢和每日热量缺口。之后随时能在「我 → 个人信息」里改。",
+            t("这几个数决定你的基础代谢和每日热量缺口。之后随时能在「我 → 个人信息」里改。"),
             color = LL.Muted, fontSize = 12.sp, lineHeight = 19.sp,
         )
 
         Spacer(Modifier.height(18.dp))
 
-        Text("称呼", color = LL.Dim, fontSize = 10.sp)
+        Text(t("称呼"), color = LL.Dim, fontSize = 10.sp)
         Spacer(Modifier.height(6.dp))
         Box(
             Modifier.fillMaxWidth().height(44.dp)
@@ -95,7 +96,7 @@ fun OnboardingPage(onDone: (String, Gender, Int, Double, Double) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 decorationBox = { inner ->
                     if (name.isEmpty()) {
-                        Text("怎么称呼你（可留空）", color = LL.Dim, fontSize = 12.5.sp)
+                        Text(t("怎么称呼你（可留空）"), color = LL.Dim, fontSize = 12.5.sp)
                     }
                     inner()
                 },
@@ -104,23 +105,23 @@ fun OnboardingPage(onDone: (String, Gender, Int, Double, Double) -> Unit) {
 
         Spacer(Modifier.height(16.dp))
 
-        Text("性别", color = LL.Dim, fontSize = 10.sp)
+        Text(t("性别"), color = LL.Dim, fontSize = 10.sp)
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            GenderChip("男", gender == Gender.MALE, Modifier.weight(1f)) { gender = Gender.MALE }
-            GenderChip("女", gender == Gender.FEMALE, Modifier.weight(1f)) { gender = Gender.FEMALE }
+            GenderChip(t("男"), gender == Gender.MALE, Modifier.weight(1f)) { gender = Gender.MALE }
+            GenderChip(t("女"), gender == Gender.FEMALE, Modifier.weight(1f)) { gender = Gender.FEMALE }
         }
 
         Spacer(Modifier.height(16.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            WheelColumn("年龄", "岁", (10..100).map { "$it" }, age - 10, Modifier.weight(1f)) {
+            WheelColumn(t("年龄"), t("岁"), (10..100).map { "$it" }, age - 10, Modifier.weight(1f)) {
                 age = it + 10
             }
-            WheelColumn("身高", "cm", (130..220).map { "$it" }, height - 130, Modifier.weight(1f)) {
+            WheelColumn(t("身高"), "cm", (130..220).map { "$it" }, height - 130, Modifier.weight(1f)) {
                 height = it + 130
             }
-            WheelColumn("体重", "kg", (35..150).map { "$it" }, weight - 35, Modifier.weight(1f)) {
+            WheelColumn(t("体重"), "kg", (35..150).map { "$it" }, weight - 35, Modifier.weight(1f)) {
                 weight = it + 35
             }
         }
@@ -135,9 +136,9 @@ fun OnboardingPage(onDone: (String, Gender, Int, Double, Double) -> Unit) {
                 .padding(horizontal = 14.dp, vertical = 13.dp),
             verticalArrangement = Arrangement.spacedBy(9.dp),
         ) {
-            IntroLine("记完训练和饮食，日历用颜色告诉你当天有没有缺口")
-            IntroLine("数据全部存在本机，断网也能记录和查看")
-            IntroLine("AI 估算可选，填了自己的 Key 才会联网")
+            IntroLine(t("记完训练和饮食，日历用颜色告诉你当天有没有缺口"))
+            IntroLine(t("数据全部存在本机，断网也能记录和查看"))
+            IntroLine(t("AI 估算可选，填了自己的 Key 才会联网"))
         }
 
         Spacer(Modifier.weight(1f))
@@ -148,13 +149,13 @@ fun OnboardingPage(onDone: (String, Gender, Int, Double, Double) -> Unit) {
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("基础代谢 ${bmr.toInt()}", color = LL.Muted, fontSize = 11.sp)
+            Text(t("基础代谢 ") + "${bmr.toInt()}", color = LL.Muted, fontSize = 11.sp)
             Spacer(Modifier.weight(1f))
-            Text("每日消耗约 ${tdee.toInt()} kcal", color = LL.Green, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+            Text(t("每日消耗约 ") + "${tdee.toInt()} kcal", color = LL.Green, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
         }
 
         Spacer(Modifier.height(14.dp))
-        PrimaryButton("开始使用", Modifier.fillMaxWidth()) {
+        PrimaryButton(t("开始使用"), Modifier.fillMaxWidth()) {
             onDone(name.trim(), gender, age, height.toDouble(), weight.toDouble())
         }
         Spacer(Modifier.height(18.dp))

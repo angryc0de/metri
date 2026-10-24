@@ -15,6 +15,7 @@
 2. **记训练** —— 力量器械 + 有氧全部按 MET 实时计算净消耗：负重影响 MET、坡度速度影响强度，并扣除训练时段的静息消耗避免与基础代谢重复计算。
 3. **看缺口** —— 日历一眼看出哪天有缺口、哪天吃超了；周汇总给出平均缺口离目标的差距和达标天数。缺口落在目标 ±100 kcal 内算达标。
 4. **数据自主** —— JSON 完整备份 + 分表 CSV 导出，两端数据模型同构（日期均为 epochDay），备份可互导。
+5. **中英双语** —— 两端都跟随系统语言自动切换中 / 英（也可用 `?lang=en` 强制指定 Web 端语言），全部界面、器械、食物与提示语均有英文词典覆盖。
 
 ## 目录结构
 
@@ -50,14 +51,15 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 cd web
 python -m http.server 8000
 # 打开 http://localhost:8000
-# 可选参数：?demo=1 载入示例数据  ?theme=light 白天主题  ?view=diet 直达某页
+# 可选参数：?demo=1 载入示例数据  ?theme=light 白天主题  ?view=diet 直达某页  ?lang=en 英文界面
 ```
 
 ### 测试
 
 ```bash
 node tools/check-web.js   # 计算层对齐校验
-node tools/e2e.js         # Web 端到端（需要 Edge）
+node tools/check-i18n.js  # 双语词条覆盖校验
+node tools/e2e.js         # Web 端到端（需要 Edge，含英文模式断言）
 ```
 
 ## 隐私

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.MealType
 import com.leanlog.app.data.MealEntryEntity
+import com.leanlog.app.t
 import com.leanlog.app.ui.UiState
 import com.leanlog.app.ui.components.LCard
 import com.leanlog.app.ui.components.calendarSection
@@ -81,7 +82,7 @@ fun DietScreen(
                                 .padding(vertical = 14.dp),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("还没有记录", color = LL.Dim, fontSize = 11.sp)
+                            Text(t("还没有记录"), color = LL.Dim, fontSize = 11.sp)
                         }
                     } else {
                         entries.forEach { entry ->
@@ -109,7 +110,7 @@ private fun IntakeCard(state: UiState, onProteinSetting: () -> Unit) {
     LCard {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
             Column(Modifier.weight(1f)) {
-                Text("摄入", color = LL.Muted, fontSize = 10.sp)
+                Text(t("摄入"), color = LL.Muted, fontSize = 10.sp)
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text("${intake.kcal.toInt()}", color = LL.Text, fontSize = 26.sp, fontWeight = FontWeight.Bold)
                     Text(" / ${target.toInt()} kcal", color = LL.Dim, fontSize = 12.sp)
@@ -127,7 +128,7 @@ private fun IntakeCard(state: UiState, onProteinSetting: () -> Unit) {
                     else -> LL.Muted
                 }
                 Text(
-                    if (!recorded) "热量缺口" else if (deficit >= 0) "缺口" else "超出",
+                    if (!recorded) t("热量缺口") else if (deficit >= 0) t("缺口") else t("超出"),
                     color = LL.Dim, fontSize = 10.sp,
                 )
                 Text(
@@ -147,7 +148,7 @@ private fun IntakeCard(state: UiState, onProteinSetting: () -> Unit) {
 
         Spacer(Modifier.height(14.dp))
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("蛋白质", color = LL.Muted, fontSize = 10.5.sp)
+            Text(t("蛋白质"), color = LL.Muted, fontSize = 10.5.sp)
             Spacer(Modifier.size(6.dp))
             Text(
                 "${fmtNum(intake.protein)} / $proteinTarget g",
@@ -155,7 +156,7 @@ private fun IntakeCard(state: UiState, onProteinSetting: () -> Unit) {
             )
             Spacer(Modifier.size(5.dp))
             Text(
-                if (state.profile.proteinAuto) "· 自动" else "· 自定义",
+                if (state.profile.proteinAuto) t("· 自动") else t("· 自定义"),
                 color = LL.Dim, fontSize = 9.sp,
             )
             Spacer(Modifier.weight(1f))
@@ -175,8 +176,8 @@ private fun IntakeCard(state: UiState, onProteinSetting: () -> Unit) {
 
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-            MacroStat("碳水", intake.carb, LL.Amber)
-            MacroStat("脂肪", intake.fat, LL.Purple)
+            MacroStat(t("碳水"), intake.carb, LL.Amber)
+            MacroStat(t("脂肪"), intake.fat, LL.Purple)
         }
     }
 }
@@ -227,7 +228,7 @@ private fun GearIcon() {
 @Composable
 private fun MealHeader(meal: MealType, kcal: Double, onAdd: () -> Unit) {
     Row(Modifier.fillMaxWidth().padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(meal.label, color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        Text(t(meal.label), color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Bold)
         if (kcal > 0) {
             Spacer(Modifier.size(6.dp))
             Text("${kcal.toInt()} kcal", color = LL.Dim, fontSize = 10.sp)
@@ -252,12 +253,12 @@ private fun MealRow(entry: MealEntryEntity, onClick: () -> Unit, onDelete: () ->
         Box(
             Modifier.size(34.dp).background(LL.Surface2, RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center,
-        ) { Text(entry.foodName.take(1), color = LL.Muted, fontSize = 14.sp, fontWeight = FontWeight.Bold) }
+        ) { Text(t(entry.foodName).take(1), color = LL.Muted, fontSize = 14.sp, fontWeight = FontWeight.Bold) }
         Spacer(Modifier.size(10.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    entry.foodName,
+                    t(entry.foodName),
                     color = LL.Text, fontSize = 13.sp, fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f, fill = false),
                 )
@@ -270,9 +271,9 @@ private fun MealRow(entry: MealEntryEntity, onClick: () -> Unit, onDelete: () ->
             Text(
                 buildString {
                     if (entry.servings != null && entry.servingUnit != null) {
-                        append("${fmtNum(entry.servings)}${entry.servingUnit} · ")
+                        append("${fmtNum(entry.servings)}${t(entry.servingUnit)} · ")
                     }
-                    append("${fmtNum(entry.grams)} g · 蛋白 ${fmtNum(entry.protein)} g")
+                    append("${fmtNum(entry.grams)} g · " + t("蛋白") + " ${fmtNum(entry.protein)} g")
                 },
                 color = LL.Muted, fontSize = 10.5.sp,
             )

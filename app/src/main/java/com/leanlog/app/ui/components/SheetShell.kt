@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.leanlog.app.t
 import com.leanlog.app.ui.theme.LL
 
 /**
@@ -157,7 +158,7 @@ fun SearchField(
         )
         if (value.isNotEmpty()) {
             Spacer(Modifier.width(8.dp))
-            Text("清除", color = LL.Dim, fontSize = 10.sp, modifier = Modifier.clickable { onValueChange("") })
+            Text(t("清除"), color = LL.Dim, fontSize = 10.sp, modifier = Modifier.clickable { onValueChange("") })
         }
     }
 }
@@ -200,8 +201,8 @@ fun NumberEditor(
         Text(hint, color = LL.Dim, fontSize = 10.sp)
         Spacer(Modifier.height(22.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            GhostButton("取消", Modifier.weight(1f)) { onCancel() }
-            PrimaryButton("保存", Modifier.weight(1f)) { onConfirm() }
+            GhostButton(t("取消"), Modifier.weight(1f)) { onCancel() }
+            PrimaryButton(t("保存"), Modifier.weight(1f)) { onConfirm() }
         }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.CalendarStatus
+import com.leanlog.app.t
 import com.leanlog.app.ui.DayCell
 import com.leanlog.app.ui.theme.LL
 import java.time.LocalDate
@@ -128,7 +129,7 @@ private fun CalendarHeader(
         // 给月份留个最小宽度：9 月和 12 月的字数不一样，不兜住的话
         // 右边那个「›」每次翻月都会左右跳一下，手感很毛躁。
         Text(
-            "${month.year} 年 ${month.monthValue} 月",
+            "${month.year} ${t("年")} ${month.monthValue} ${t("月")}",
             modifier = Modifier.widthIn(min = 102.dp),
             color = LL.Text,
             fontSize = 15.sp,
@@ -157,7 +158,7 @@ private fun CalendarIconButton(onClick: () -> Unit, content: @Composable () -> U
 @Composable
 private fun WeekdayHeader() {
     Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 0.dp).padding(bottom = 4.dp)) {
-        listOf("一", "二", "三", "四", "五", "六", "日").forEach { label ->
+        listOf(t("一"), t("二"), t("三"), t("四"), t("五"), t("六"), t("日")).forEach { label ->
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 Text(label, color = LL.Dim, fontSize = 10.sp)
             }
@@ -218,17 +219,17 @@ private fun CalendarLegend(heatWarn: Boolean, collapsed: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        LegendItem(LL.StrengthDot, "力量")
-        LegendItem(LL.CardioDot, "有氧")
+        LegendItem(LL.StrengthDot, t("力量"))
+        LegendItem(LL.CardioDot, t("有氧"))
         Text(
-            "休", color = LL.Purple, fontSize = 10.sp,
+            t("休"), color = LL.Purple, fontSize = 10.sp,
             fontWeight = FontWeight.ExtraBold, fontStyle = FontStyle.Italic,
         )
         Spacer(Modifier.weight(1f))
         if (heatWarn) {
-            Text("数字颜色 = 热量缺口", color = LL.Dim, fontSize = 9.sp)
+            Text(t("数字颜色 = 热量缺口"), color = LL.Dim, fontSize = 9.sp)
         } else {
-            Text("缺口警示已关闭", color = LL.Dim, fontSize = 9.sp)
+            Text(t("缺口警示已关闭"), color = LL.Dim, fontSize = 9.sp)
         }
     }
 }
@@ -306,7 +307,7 @@ private fun DayCellView(
         Box(Modifier.height(12.dp), contentAlignment = Alignment.Center) {
             if (showRest) {
                 Text(
-                    "休",
+                    t("休"),
                     color = LL.Purple,
                     fontSize = 11.sp,
                     lineHeight = 12.sp,

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leanlog.app.core.CardioType
 import com.leanlog.app.core.SeedData
+import com.leanlog.app.t
 import com.leanlog.app.ui.AppViewModel
 import com.leanlog.app.ui.CardioDraft
 import com.leanlog.app.ui.ExerciseUi
@@ -71,12 +72,12 @@ fun ExercisePickSheet(
     }
 
     SheetShell(
-        title = "选择器械",
-        subtitle = if (exercises.isEmpty()) null else "${exercises.size} 个",
+        title = t("选择器械"),
+        subtitle = if (exercises.isEmpty()) null else "${exercises.size} ${t("个")}",
         onDismiss = onDismiss,
     ) {
         Box(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 8.dp)) {
-            SearchField(query, "搜索器械，例如：划船", onValueChange = { query = it })
+            SearchField(query, t("搜索器械，例如：划船"), onValueChange = { query = it })
         }
         Row(Modifier.fillMaxSize()) {
             // 左侧部位导航
@@ -85,10 +86,10 @@ fun ExercisePickSheet(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (recentExercises.isNotEmpty()) {
-                    RailButton("最近", group == "recent") { group = "recent" }
+                    RailButton(t("最近"), group == "recent") { group = "recent" }
                 }
                 groups.forEach { (id, name) ->
-                    RailButton(name, group == id) { group = id }
+                    RailButton(t(name), group == id) { group = id }
                 }
             }
             LazyVerticalGrid(
@@ -109,7 +110,7 @@ fun ExercisePickSheet(
                         ExerciseIcon(ex.id, size = 34.dp, tint = LL.Muted)
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            ex.name,
+                            t(ex.name),
                             color = LL.Text, fontSize = 11.sp, fontWeight = FontWeight.Medium,
                         )
                     }
@@ -142,7 +143,7 @@ private fun RailButton(label: String, selected: Boolean, onClick: () -> Unit) {
 
 @Composable
 fun CardioPickSheet(onDismiss: () -> Unit, onPick: (String) -> Unit) {
-    SheetShell(title = "选择有氧项目", onDismiss = onDismiss, heightFraction = 0.72f) {
+    SheetShell(title = t("选择有氧项目"), onDismiss = onDismiss, heightFraction = 0.72f) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(14.dp),
@@ -161,9 +162,9 @@ fun CardioPickSheet(onDismiss: () -> Unit, onPick: (String) -> Unit) {
                     ExerciseIcon(type.id, size = 28.dp, tint = LL.Amber)
                     Spacer(Modifier.width(9.dp))
                     Column {
-                        Text(type.name, color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
+                        Text(t(type.name), color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
                         Text(
-                            type.params.joinToString(" · ") { it.label },
+                            type.params.joinToString(" · ") { t(it.label) },
                             color = LL.Dim, fontSize = 8.5.sp,
                         )
                     }
@@ -191,19 +192,19 @@ fun StrengthParamPage(
 
     FullScreenPage(
         title = draft.exerciseName,
-        subtitle = if (draft.editId == null) "记录这一组训练" else "编辑记录",
+        subtitle = if (draft.editId == null) t("记录这一组训练") else t("编辑记录"),
         onBack = onBack,
         trailing = {
             if (draft.editId != null) {
                 Text(
-                    "删除", color = LL.Red, fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                    t("删除"), color = LL.Red, fontSize = 12.sp, fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable { vm.deleteStrength(draft.editId) },
                 )
             }
         },
         footer = {
             PrimaryButton(
-                text = if (draft.editId == null) "添加记录" else "保存修改",
+                text = if (draft.editId == null) t("添加记录") else t("保存修改"),
                 modifier = Modifier.fillMaxWidth(),
             ) { vm.saveStrength() }
         },
@@ -220,7 +221,7 @@ fun StrengthParamPage(
                 ) { ExerciseIcon(draft.exerciseId, size = 32.dp, tint = LL.Text) }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text(draft.exerciseName, color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(t(draft.exerciseName), color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     draft.lastSummary?.let {
                         Text(it, color = LL.Muted, fontSize = 10.5.sp)
                     }
@@ -235,8 +236,8 @@ fun StrengthParamPage(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("自重动作", color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
-                    Text("开启后不记重量，只记次数与组数", color = LL.Dim, fontSize = 9.5.sp)
+                    Text(t("自重动作"), color = LL.Text, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
+                    Text(t("开启后不记重量，只记次数与组数"), color = LL.Dim, fontSize = 9.5.sp)
                 }
                 ToggleSwitch(checked = draft.bodyweight) { on ->
                     vm.updateStrengthDraft { it.copy(bodyweight = on) }
@@ -252,7 +253,7 @@ fun StrengthParamPage(
             ) {
                 if (!draft.bodyweight) {
                     WheelColumn(
-                        label = "重量 kg",
+                        label = t("重量 kg"),
                         value = fmtNum(draft.weightKg),
                         modifier = Modifier.weight(1.15f),
                         items = weightOptions.map { fmtNum(it) },
@@ -262,7 +263,7 @@ fun StrengthParamPage(
                     }
                 }
                 WheelColumn(
-                    label = "次数",
+                    label = t("次数"),
                     value = draft.reps.toString(),
                     modifier = Modifier.weight(1f),
                     items = repOptions.map { it.toString() },
@@ -271,7 +272,7 @@ fun StrengthParamPage(
                     vm.updateStrengthDraft { it.copy(reps = repOptions[idx]) }
                 }
                 WheelColumn(
-                    label = "组数",
+                    label = t("组数"),
                     value = draft.sets.toString(),
                     modifier = Modifier.weight(1f),
                     items = setOptions.map { it.toString() },
@@ -283,7 +284,7 @@ fun StrengthParamPage(
 
             Spacer(Modifier.height(12.dp))
             Text(
-                "预计训练时长 ${estimatedMinutes(draft)} 分钟（组数 ×（每组约 ${draft.reps * 3} 秒 + 组间休息 90 秒））",
+                "${t("预计训练时长 ")}${estimatedMinutes(draft)}${t(" 分钟（组数 ×（每组约 ")}${draft.reps * 3}${t(" 秒 + 组间休息 90 秒））")}",
                 color = LL.Dim, fontSize = 9.5.sp,
                 modifier = Modifier.padding(horizontal = 4.dp),
             )
@@ -328,19 +329,19 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
     val type: CardioType = draft.type
     FullScreenPage(
         title = type.name,
-        subtitle = if (draft.editId == null) "记录这一次有氧" else "编辑记录",
+        subtitle = if (draft.editId == null) t("记录这一次有氧") else t("编辑记录"),
         onBack = onBack,
         trailing = {
             if (draft.editId != null) {
                 Text(
-                    "删除", color = LL.Red, fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                    t("删除"), color = LL.Red, fontSize = 12.sp, fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable { vm.deleteCardio(draft.editId) },
                 )
             }
         },
         footer = {
             PrimaryButton(
-                text = if (draft.editId == null) "添加记录" else "保存修改",
+                text = if (draft.editId == null) t("添加记录") else t("保存修改"),
                 modifier = Modifier.fillMaxWidth(),
                 color = LL.Amber,
             ) { vm.saveCardio() }
@@ -357,9 +358,9 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
                 ) { ExerciseIcon(type.id, size = 32.dp, tint = LL.Amber) }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text(type.name, color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(t(type.name), color = LL.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        type.params.joinToString(" · ") { it.label },
+                        type.params.joinToString(" · ") { t(it.label) },
                         color = LL.Muted, fontSize = 10.5.sp,
                     )
                 }
@@ -369,7 +370,7 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
             type.enumSpec?.let { spec ->
                 Spacer(Modifier.height(12.dp))
                 Column(Modifier.fillMaxWidth().background(LL.Surface, RoundedCornerShape(14.dp)).padding(14.dp)) {
-                    Text(spec.label, color = LL.Muted, fontSize = 10.sp)
+                    Text(t(spec.label), color = LL.Muted, fontSize = 10.sp)
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         spec.options.forEach { option ->
@@ -381,7 +382,7 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
                                     .padding(horizontal = 12.dp, vertical = 7.dp),
                             ) {
                                 Text(
-                                    option,
+                                    t(option),
                                     color = if (on) LL.Amber else LL.Muted,
                                     fontSize = 11.5.sp,
                                     fontWeight = if (on) FontWeight.Bold else FontWeight.Normal,
@@ -401,7 +402,7 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
                             val values = remember(spec.key) { buildRange(spec.min, spec.max, spec.step) }
                             val idx = values.indexOfFirst { it >= current }.let { if (it < 0) 0 else it }
                             WheelColumn(
-                                label = "${spec.label} ${spec.unit}",
+                                label = "${t(spec.label)} ${t(spec.unit)}",
                                 value = fmtNum(current),
                                 modifier = Modifier.weight(1f),
                                 items = values.map { fmtNum(it) },
@@ -416,7 +417,7 @@ fun CardioParamPage(vm: AppViewModel, draft: CardioDraft, onBack: () -> Unit) {
 
             Spacer(Modifier.height(12.dp))
             Text(
-                "消耗按「MET × 体重 × 时长」估算，已扣除这段时间的静息消耗。实际误差约 ±15%。",
+                t("消耗按「MET × 体重 × 时长」估算，已扣除这段时间的静息消耗。实际误差约 ±15%。"),
                 color = LL.Dim, fontSize = 9.5.sp, modifier = Modifier.padding(horizontal = 4.dp),
             )
             Spacer(Modifier.height(20.dp))

@@ -25,6 +25,7 @@ import com.leanlog.app.data.WeightLogEntity
 import com.leanlog.app.domain.CardioParams
 import com.leanlog.app.domain.Figures
 import com.leanlog.app.export.ExportService
+import com.leanlog.app.t
 import com.leanlog.app.ui.theme.LL
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -390,7 +391,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 sets = existing?.sets ?: (last?.sets ?: 4),
                 bodyweight = existing?.bodyweight
                     ?: (last?.bodyweight ?: (exercise?.bodyweightDefault ?: false)),
-                lastSummary = last?.let { "上次 ${fmt(it.weightKg)}kg × ${it.reps}次 × ${it.sets}组" },
+                lastSummary = last?.let { t("上次 ") + "${fmt(it.weightKg)}kg × ${it.reps}" + t("次") + " × ${it.sets}" + t("组") },
             )
             _strengthDraft.value = draft
             _overlay.value = Overlay.StrengthParam(exerciseId, editId)
@@ -513,8 +514,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             closeOverlay()
             reloadAll()
             showToast(
-                if (draft.editId == null) "已记录 ${draft.exerciseName} · 净消耗 ${calc.net.toInt()} kcal"
-                else "已保存修改"
+                if (draft.editId == null) t("已记录 ") + t(draft.exerciseName) + t(" · 净消耗 ") + "${calc.net.toInt()} kcal"
+                else t("已保存修改")
             )
         }
     }
@@ -526,7 +527,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             closeOverlay()
             reloadAll()
             if (record != null) {
-                showToast("已删除 ${record.exerciseName}") {
+                showToast(t("已删除 ") + t(record.exerciseName)) {
                     viewModelScope.launch {
                         repository.addStrength(record.copy(id = 0))
                         reloadAll()
@@ -566,8 +567,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             closeOverlay()
             reloadAll()
             showToast(
-                if (draft.editId == null) "已记录 ${draft.type.name} · 净消耗 ${calc.net.toInt()} kcal"
-                else "已保存修改"
+                if (draft.editId == null) t("已记录 ") + t(draft.type.name) + t(" · 净消耗 ") + "${calc.net.toInt()} kcal"
+                else t("已保存修改")
             )
         }
     }
@@ -579,7 +580,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             closeOverlay()
             reloadAll()
             if (record != null) {
-                showToast("已删除 ${record.typeName}") {
+                showToast(t("已删除 ") + t(record.typeName)) {
                     viewModelScope.launch {
                         repository.addCardio(record.copy(id = 0))
                         reloadAll()
@@ -613,8 +614,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             closeOverlay()
             reloadAll()
             showToast(
-                if (draft.editId == null) "已加入${draft.meal.label} · ${(draft.kcalPer100g * factor).toInt()} kcal"
-                else "已保存修改"
+                if (draft.editId == null) t("已加入") + t(draft.meal.label) + " · ${(draft.kcalPer100g * factor).toInt()} kcal"
+                else t("已保存修改")
             )
         }
     }
@@ -623,7 +624,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             repository.deleteMeal(entry.id)
             reloadAll()
-            showToast("已删除 ${entry.foodName}") {
+            showToast(t("已删除 ") + t(entry.foodName)) {
                 viewModelScope.launch {
                     repository.addMeal(entry.copy(id = 0))
                     reloadAll()
@@ -654,7 +655,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             repository.addMeal(entry)
             closeOverlay()
             reloadAll()
-            showToast("已加入${meal.label} · ${entry.kcal.toInt()} kcal") {
+            showToast(t("已加入") + t(meal.label) + " · ${entry.kcal.toInt()} kcal") {
                 viewModelScope.launch {
                     repository.deleteMeal(entry.id)
                     reloadAll()
@@ -674,7 +675,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             // 配了 Key 却仍走本地规则 = 请求失败了。必须说出来，
             // 否则用户会以为 AI 在用，实际拿到的是误差 ±25% 的兜底数字。
             if (!estimate.fromAi && settings.aiConfigured) {
-                showToast(ai.lastError ?: "AI 请求失败，已用本地规则估算")
+                showToast(ai.lastError ?: t("AI 请求失败，已用本地规则估算"))
             }
             _overlay.value = Overlay.AiResult(estimate, query, meal)
         }
@@ -726,7 +727,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             )
             closeOverlay()
             reloadAll()
-            showToast("已加入${meal.label} · ${totalKcal.toInt()} kcal")
+            showToast(t("已加入") + t(meal.label) + " · ${totalKcal.toInt()} kcal")
         }
     }
 
@@ -766,7 +767,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             settings.onboarded = true
             _state.update { it.copy(onboarded = true) }
             reloadAll()
-            showToast("资料已保存，开始记录吧")
+            showToast(t("资料已保存，开始记录吧"))
         }
     }
 
@@ -798,7 +799,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             repository.saveProfile(profile.copy(proteinAuto = auto, proteinCustomG = customG))
             closeOverlay()
             reloadAll()
-            showToast(if (auto) "蛋白目标已恢复自动" else "蛋白目标已设为 $customG g")
+            showToast(if (auto) t("蛋白目标已恢复自动") else t("蛋白目标已设为 ") + "$customG g")
         }
     }
 
@@ -832,7 +833,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         settings.aiModel = model.trim().ifBlank { SettingsStore.DEFAULT_MODEL }
         settings.aiVisionModel = visionModel.trim()
         closeOverlay()
-        showToast(if (settings.aiConfigured) "AI 已配置" else "已清除 API Key")
+        showToast(if (settings.aiConfigured) t("AI 已配置") else t("已清除 API Key"))
     }
 
     fun aiConfigured(): Boolean = settings.aiConfigured
@@ -847,9 +848,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 .onSuccess { result ->
                     settings.lastBackupAt = System.currentTimeMillis()
                     closeOverlay()
-                    showToast("已导出 ${result.files.size} 个文件 · ${result.dailySummary}")
+                    showToast(t("已导出 ") + "${result.files.size} " + t("个文件") + " · ${result.dailySummary}")
                 }
-                .onFailure { showToast("导出失败：${it.message}") }
+                .onFailure { showToast(t("导出失败：") + it.message) }
         }
     }
 
@@ -873,7 +874,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     fun exerciseById(id: String): ExerciseUi? = _state.value.exercises.firstOrNull { it.id == id }
 
-    fun genderLabel(p: ProfileEntity): String = if (p.gender == "FEMALE") "女" else "男"
+    fun genderLabel(p: ProfileEntity): String = if (p.gender == "FEMALE") t("女") else t("男")
 
     fun genderOf(p: ProfileEntity): Gender = Figures.gender(p)
 

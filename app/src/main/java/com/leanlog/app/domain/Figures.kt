@@ -7,6 +7,7 @@ import com.leanlog.app.core.LeanLogMath
 import com.leanlog.app.core.WeightPoint
 import com.leanlog.app.data.ProfileEntity
 import com.leanlog.app.data.WeightLogEntity
+import com.leanlog.app.t
 import org.json.JSONObject
 
 /**
@@ -121,8 +122,8 @@ object CardioParams {
         val knobs = type.params.mapNotNull { spec ->
             val v = params[spec.key] ?: return@mapNotNull null
             val shown = if (v == v.toLong().toDouble()) v.toLong().toString() else v.toString()
-            "${spec.label} $shown${spec.unit}"
+            "${t(spec.label)} $shown${t(spec.unit)}"
         }
-        return (listOfNotNull(enumValue) + knobs).joinToString(" · ")
+        return (listOfNotNull(enumValue?.let { t(it) }) + knobs).joinToString(" · ")
     }
 }
